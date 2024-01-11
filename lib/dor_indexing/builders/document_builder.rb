@@ -1,0 +1,106 @@
+# frozen_string_literal: true
+
+class DorIndexing
+  module Builders
+    # Builds solr document for indexing.
+    class DocumentBuilder
+      ADMIN_POLICY_INDEXER = DorIndexing::Indexers::CompositeIndexer.new(
+        DorIndexing::Indexers::AdministrativeTagIndexer,
+        DorIndexing::Indexers::DataIndexer,
+        DorIndexing::Indexers::RoleMetadataIndexer,
+        DorIndexing::Indexers::DefaultObjectRightsIndexer,
+        DorIndexing::Indexers::IdentityMetadataIndexer,
+        DorIndexing::Indexers::DescriptiveMetadataIndexer,
+        DorIndexing::Indexers::IdentifiableIndexer,
+        DorIndexing::Indexers::WorkflowsIndexer
+      )
+
+      COLLECTION_INDEXER = DorIndexing::Indexers::CompositeIndexer.new(
+        DorIndexing::Indexers::AdministrativeTagIndexer,
+        DorIndexing::Indexers::DataIndexer,
+        DorIndexing::Indexers::RightsMetadataIndexer,
+        DorIndexing::Indexers::IdentityMetadataIndexer,
+        DorIndexing::Indexers::DescriptiveMetadataIndexer,
+        DorIndexing::Indexers::IdentifiableIndexer,
+        DorIndexing::Indexers::ReleasableIndexer,
+        DorIndexing::Indexers::WorkflowsIndexer
+      )
+
+      ITEM_INDEXER = DorIndexing::Indexers::CompositeIndexer.new(
+        DorIndexing::Indexers::AdministrativeTagIndexer,
+        DorIndexing::Indexers::DataIndexer,
+        DorIndexing::Indexers::RightsMetadataIndexer,
+        DorIndexing::Indexers::IdentityMetadataIndexer,
+        DorIndexing::Indexers::DescriptiveMetadataIndexer,
+        DorIndexing::Indexers::EmbargoMetadataIndexer,
+        DorIndexing::Indexers::ContentMetadataIndexer,
+        DorIndexing::Indexers::IdentifiableIndexer,
+        DorIndexing::Indexers::CollectionTitleIndexer,
+        DorIndexing::Indexers::ReleasableIndexer,
+        DorIndexing::Indexers::WorkflowsIndexer
+      )
+
+      INDEXERS = {
+        Cocina::Models::ObjectType.agreement => ITEM_INDEXER, # Agreement uses same indexer as item
+        Cocina::Models::ObjectType.admin_policy => ADMIN_POLICY_INDEXER,
+        Cocina::Models::ObjectType.collection => COLLECTION_INDEXER
+      }.freeze
+
+      @@parent_collections = {} # rubocop:disable Style/ClassVars
+
+      def self.for(model:, workflow_client:, cocina_repository:)
+        new(model:, workflow_client:, cocina_repository:).for
+      end
+
+      def self.reset_parent_collections
+        @@parent_collections = {} # rubocop:disable Style/ClassVars
+      end
+
+      def initialize(model:, workflow_client:, cocina_repository:)
+        @model = model
+        @workflow_client = workflow_client
+        @cocina_repository = cocina_repository
+      end
+
+      # @param [Cocina::Models::DROWithMetadata,Cocina::Models::CollectionWithMetadata,Cocina::Model::AdminPolicyWithMetadata] model
+      def for
+        indexer_for_type(model.type).new(id:,
+                                         cocina: model,
+                                         parent_collections:,
+                                         administrative_tags:,
+                                         workflow_client:,
+                                         cocina_repository:)
+      end
+
+      private
+
+      attr_reader :model, :workflow_client, :cocina_repository
+
+      def id
+        model.externalIdentifier
+      end
+
+      def indexer_for_type(type)
+        INDEXERS.fetch(type, ITEM_INDEXER)
+      end
+
+      def parent_collections
+        return [] unless model.dro?
+
+        Array(model.structural&.isMemberOf).filter_map do |rel_druid|
+          @@parent_collections[rel_druid] ||= cocina_repository.find(rel_druid)
+        rescue DorIndexing::CocinaRepository::RepositoryError
+          Honeybadger.notify("Bad association found on #{model.externalIdentifier}. #{rel_druid} could not be found")
+          # This may happen if the referenced Collection does not exist (bad data)
+          nil
+        end
+      end
+
+      def administrative_tags
+        cocina_repository.administrative_tags(id)
+      rescue DorIndexing::CocinaRepository::RepositoryError
+        []
+      end
+    end
+  end
+end
