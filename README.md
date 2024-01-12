@@ -2,6 +2,14 @@
 
 DorIndexing is a Ruby gem that creates Solr documents from Cocina objects for the purposes of indexing. It was extracted from DOR Indexing App.
 
+## Motivation
+
+In our previous architecture, rolling indexing was performed on the Dor Indexing App server. This was inefficient and slow, as it required API calls to Dor Services App to retrieve Cocina items.
+
+Gemifying the creation of Solr documents allows changing the architecture such that rolling indexing is performed on the Dor Services App server. This allows the more efficient retrieval of Cocina items via direct ActiveRecord db access.
+
+Further, it allows other indexing (e.g., via RabbitMQ messages) to continue on the Dor Indexing App server.
+
 ## Installation
 
 Install the gem and add to the application's Gemfile by executing:
