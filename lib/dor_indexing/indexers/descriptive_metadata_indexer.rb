@@ -28,7 +28,7 @@ class DorIndexing
           'contributor_text_nostem_im' => author_all, # author names should be tokenized but not stemmed
           'contributor_orcids_ssim' => orcids,
           # topic
-          'topic_ssim' => stanford_mods_record.topic_facet.uniq,
+          'topic_ssim' => stanford_mods_record.topic_facet&.uniq,
           'topic_tesim' => stemmable_topics,
           # publication
           'originInfo_date_created_tesim' => creation_date,
