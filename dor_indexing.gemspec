@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'cocina-models', '~> 0.93.0'
+  spec.add_dependency 'cocina-models', '~> 0.94.0'
   spec.add_dependency 'honeybadger'
   spec.add_dependency 'marc-vocab', '~> 0.3.0'
   spec.add_dependency 'solrizer'
