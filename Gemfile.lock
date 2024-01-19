@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dor_indexing (1.0.0)
+    dor_indexing (1.1.0)
       cocina-models (~> 0.94.0)
       honeybadger
       marc-vocab (~> 0.3.0)
