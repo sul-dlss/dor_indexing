@@ -31,7 +31,9 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'cocina-models', '~> 0.94.0'
+  # spec.add_dependency 'cocina-models', '~> 0.94.0'
+  # spec.add_dependency 'cocina-models', git: 'https://github.com/sul-dlss/cocina-models.git', branch: 'title-build-tweaks'
+  # spec.add_dependency 'dor-workflow-client', '~> 7.0' # this should live here after cocina-models is released
   spec.add_dependency 'honeybadger'
   spec.add_dependency 'marc-vocab', '~> 0.3.0'
   spec.add_dependency 'solrizer'

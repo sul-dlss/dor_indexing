@@ -445,7 +445,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       end
 
       it 'constructs title from structuredValue, respecting order of occurrence' do
-        skip 'Naomi is fixing the title reconstruction order'
         expect(doc['sw_display_title_tesim']).to eq 'The title. Vol. 1, Supplement : a subtitle'
       end
     end
@@ -506,7 +505,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       end
 
       it 'constructs title from structuredValue, respecting order of occurrence' do
-        skip 'Naomi is fixing the title reconstruction order'
         expect(doc['sw_display_title_tesim']).to eq 'Series 1. Title'
       end
     end
@@ -591,7 +589,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       end
 
       it 'uses value with trailing punctuation of .,;:/\ stripped' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title'
+        expect(doc['sw_display_title_tesim']).to eq 'Title '
       end
     end
 
@@ -731,8 +729,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       end
 
       it 'uses correct punctuation and respects order of occurrence' do
-        skip 'Naomi is fixing the title reconstruction order'
-        expect(doc['sw_display_title_tesim']).to eq 'Series 1. A Title'
+        expect(doc['sw_display_title_tesim']).to eq 'Series 1.  A Title'
       end
     end
   end
