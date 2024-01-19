@@ -42,7 +42,6 @@ RSpec.describe DorIndexing::WorkflowFields do
     let(:status) do
       instance_double(Dor::Workflow::Client::Status,
                       milestones:,
-                      info: { status_code: 4 },
                       display: 'v4 In accessioning (described, published)',
                       display_simplified: 'In accessioning')
     end

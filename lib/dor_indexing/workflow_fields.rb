@@ -32,7 +32,6 @@ class DorIndexing
     def add_status(solr_doc)
       # This is the status on the Argo show page (e.g. "v4 In accessioning (described, published, deposited)")
       solr_doc['status_ssi'] = status_service.display
-      return unless status_service.info[:status_code]
 
       # This is used for Argo's "Processing Status" facet
       solr_doc['processing_status_text_ssi'] = status_service.display_simplified
