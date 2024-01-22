@@ -1,3 +1,7 @@
+[![Gem Version](https://badge.fury.io/rb/dor_indexing.svg)](https://badge.fury.io/rb/dor_indexing)
+[![CircleCI](https://circleci.com/gh/sul-dlss/dor_indexing.svg?style=svg)](https://circleci.com/gh/sul-dlss/dor_indexing)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/debefc8907cf263f45e9/test_coverage)](https://codeclimate.com/github/sul-dlss/dor_indexing/test_coverage)
+
 # DorIndexing
 
 DorIndexing is a Ruby gem that creates Solr documents from Cocina objects for the purposes of indexing. It was extracted from DOR Indexing App.
