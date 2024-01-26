@@ -21,15 +21,22 @@ class DorIndexing
       def to_solr
         {
           # title
-          'sw_display_title_tesim' => title,
+          'main_title_tenim' => main_title, # for searching; 2 more field types are copyFields in solr schema.xml
+          'full_title_tenim' => full_title, # for searching; 1 more field type is copyField in solr schema.xml
+          'additional_titles_tenim' => additional_titles, # for searching; 1 more field type is copyField in solr schema.xml
+          'display_title_ss' => display_title, # for display in Argo
+          'sw_display_title_tesim' => display_title, # for display in Argo DEPRECATED in favor of display_title_ss
+
           # contributor
           'author_text_nostem_im' => author_primary, # primary author tokenized but not stemmed
           'sw_author_tesim' => author_primary, # used for author display in Argo
           'contributor_text_nostem_im' => author_all, # author names should be tokenized but not stemmed
           'contributor_orcids_ssim' => orcids,
+
           # topic
           'topic_ssim' => stanford_mods_record.topic_facet&.uniq,
           'topic_tesim' => stemmable_topics,
+
           # publication
           'originInfo_date_created_tesim' => creation_date,
           'originInfo_publisher_tesim' => publisher_name,
@@ -85,7 +92,19 @@ class DorIndexing
         DorIndexing::Builders::OrcidBuilder.build(Array(cocina.description.contributor))
       end
 
-      def title
+      def main_title
+        Cocina::Models::Builders::TitleBuilder.main_title(cocina.description.title)
+      end
+
+      def full_title
+        Cocina::Models::Builders::TitleBuilder.full_title(cocina.description.title)
+      end
+
+      def additional_titles
+        Cocina::Models::Builders::TitleBuilder.additional_titles(cocina.description.title)
+      end
+
+      def display_title
         Cocina::Models::Builders::TitleBuilder.build(cocina.description.title)
       end
 

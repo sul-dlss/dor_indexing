@@ -5,731 +5,448 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
 
   let(:bare_druid) { 'qy781dy0220' }
   let(:druid) { "druid:#{bare_druid}" }
+  let(:titles) { [{ value: 'override me' }] }
   let(:doc) { indexer.to_solr }
-  let(:cocina) do
-    build(:dro, id: druid).new(
-      description: description.merge(purl: "https://purl.stanford.edu/#{bare_druid}")
-    )
+  let(:description) do
+    {
+      title: titles,
+      purl: "https://purl.stanford.edu/#{bare_druid}"
+    }
   end
+  let(:cocina) { build(:dro, id: druid).new(description:) }
 
-  describe 'title mappings from Cocina to Solr sw_display_title_tesim' do
-    describe 'single untyped title' do
-      # Select value; status: primary may or may not be present
-      let(:description) do
-        {
-          title: [
-            {
-              value: 'Title'
-            }
-          ]
-        }
+  describe 'title mappings from Cocina to Solr' do
+    # 'main_title_tenim' => main_title, # for searching; 2 more field types are copyFields in solr schema.xml (to improve search results)
+    # 'full_title_tenim' => full_title, # for searching; 1 more field type is copyField in solr schema.xml
+    # 'additional_titles_tenim' => additional_titles, # for searching; 1 more field type is copyField in solr schema.xml
+    # 'display_title_ss' => display_title, # for display in Argo
+    # 'sw_display_title_tesim' => DEPRECATED; will be replaced by display_title_ss
+
+    context 'with multiple typed and untyped simple title values, one status primary' do
+      let(:titles) do
+        [
+          {
+            value: 'Not Primary'
+          },
+          {
+            value: 'Primary Title',
+            type: 'translated',
+            status: 'primary'
+          }
+        ]
       end
 
-      it 'uses title value' do
+      it 'main_title_tenim is value with status primary' do
+        expect(doc['main_title_tenim']).to eq ['Primary Title']
+      end
+
+      it 'full_title_tenim is value with status primary' do
+        expect(doc['full_title_tenim']).to eq ['Primary Title']
+      end
+
+      it 'additional_titles_tenim is value(s) without status primary' do
+        expect(doc['additional_titles_tenim']).to eq ['Not Primary']
+      end
+
+      it 'display_title_ss is value with status primary' do
+        expect(doc['display_title_ss']).to eq 'Primary Title'
+      end
+
+      it 'sw_display_title_tesim is value with status primary' do
+        expect(doc['sw_display_title_tesim']).to eq 'Primary Title'
+      end
+    end
+
+    context 'with multiple typed titles, none status primary' do
+      # Select first
+      let(:titles) do
+        [
+          {
+            value: 'First',
+            type: 'translated'
+          },
+          {
+            value: 'Second',
+            type: 'alternative'
+          },
+          {
+            value: 'Third',
+            type: 'transliterated'
+          }
+        ]
+      end
+
+      it 'main_title_tenim is first value' do
+        expect(doc['main_title_tenim']).to eq ['First']
+      end
+
+      it 'full_title_tenim is first value' do
+        expect(doc['full_title_tenim']).to eq ['First']
+      end
+
+      it 'additional_titles_tenim is non-first values' do
+        expect(doc['additional_titles_tenim']).to eq %w[Second Third]
+      end
+
+      it 'display_title_ss is first value' do
+        expect(doc['display_title_ss']).to eq 'First'
+      end
+
+      it 'sw_display_title_tesim is first value' do
+        expect(doc['sw_display_title_tesim']).to eq 'First'
+      end
+    end
+
+    context 'with space/punctuation/space ending simple value' do
+      let(:titles) do
+        [
+          { value: 'Title /' }
+        ]
+      end
+
+      # strip one or more instances of .,;:/\ plus whitespace at beginning or end of string
+
+      it 'main_title_tenim is value without trailing punctuation or spaces' do
+        expect(doc['main_title_tenim']).to eq ['Title']
+      end
+
+      it 'full_title_tenim is value without trailing punctuation or spaces' do
+        expect(doc['full_title_tenim']).to eq ['Title']
+      end
+
+      it 'additional_titles_tenim is nil' do
+        expect(doc['additional_titles_tenim']).to be_nil
+      end
+
+      it 'display_title_ss is value without trailing punctuation or spaces' do
+        expect(doc['display_title_ss']).to eq 'Title'
+      end
+
+      it 'sw_display_title_tesim is value without trailing punctuation or spaces' do
         expect(doc['sw_display_title_tesim']).to eq 'Title'
       end
     end
 
-    describe 'single typed title' do
-      # Select value; status: primary may or may not be present
-      let(:description) do
-        {
-          title: [
-            {
-              value: 'Title',
-              type: 'translated'
-            }
-          ]
-        }
+    context 'with structuredValue with all parts in common order' do
+      let(:titles) do
+        [
+          {
+            structuredValue: [
+              {
+                value: 'A',
+                type: 'nonsorting characters'
+              },
+              {
+                value: 'title',
+                type: 'main title'
+              },
+              {
+                value: 'a subtitle',
+                type: 'subtitle'
+              },
+              {
+                value: 'Vol. 1',
+                type: 'part number'
+              },
+              {
+                value: 'Supplement',
+                type: 'part name'
+              }
+            ]
+          }
+        ]
       end
 
-      it 'uses title value' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title'
-      end
-    end
-
-    describe 'multiple untyped titles, one primary' do
-      # Select primary
-      let(:description) do
-        {
-          title: [
-            {
-              value: 'Title 1'
-            },
-            {
-              value: 'Title 2',
-              status: 'primary'
-            }
-          ]
-        }
+      it 'main_title_tenim is main title and nonsorting character' do
+        expect(doc['main_title_tenim']).to eq ['A title']
       end
 
-      it 'uses value from title with status primary' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title 2'
-      end
-    end
-
-    describe 'multiple untyped titles, none primary' do
-      # Select first
-      let(:description) do
-        {
-          title: [
-            {
-              value: 'Title 1'
-            },
-            {
-              value: 'Title 2'
-            }
-          ]
-        }
+      it 'full_title_tenim is rebuilt structuredValue withOUT additional punctuation' do
+        expect(doc['full_title_tenim']).to eq ['A title a subtitle Vol. 1 Supplement']
       end
 
-      it 'uses first value' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title 1'
-      end
-    end
-
-    describe 'multiple typed and untyped titles, one primary' do
-      let(:description) do
-        {
-          title: [
-            {
-              value: 'Title 1',
-              type: 'translated',
-              status: 'primary'
-            },
-            {
-              value: 'Title 2'
-            }
-          ]
-        }
+      it 'additional_titles_tenim is nil' do
+        expect(doc['additional_titles_tenim']).to be_nil
       end
 
-      it 'uses value from title with status primary' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title 1'
-      end
-    end
-
-    describe 'multiple typed and untyped titles, none primary' do
-      # Select first without type
-      let(:description) do
-        {
-          title: [
-            {
-              value: 'Title 1',
-              type: 'alternative'
-            },
-            {
-              value: 'Title 2'
-            },
-            {
-              value: 'Title 3'
-            }
-          ]
-        }
+      it 'display_title_ss is rebuilt structuredValue with punctuation' do
+        expect(doc['display_title_ss']).to eq 'A title : a subtitle. Vol. 1, Supplement'
       end
 
-      it 'uses value from first title without type' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title 2'
-      end
-    end
-
-    describe 'multiple typed titles, one primary' do
-      # Select primary
-      let(:description) do
-        {
-          title: [
-            {
-              value: 'Title 2',
-              type: 'alternative'
-            },
-            {
-              value: 'Title 1',
-              type: 'translated',
-              status: 'primary'
-            }
-          ]
-        }
-      end
-
-      it 'uses value from title with status primary' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title 1'
-      end
-    end
-
-    describe 'multiple typed titles, none primary' do
-      # Select first
-      let(:description) do
-        {
-          title: [
-            {
-              value: 'Title 1',
-              type: 'translated'
-            },
-            {
-              value: 'Title 2',
-              type: 'alternative'
-            }
-          ]
-        }
-      end
-
-      it 'uses value from first title' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title 1'
-      end
-    end
-
-    describe 'nonsorting character count' do
-      # Note doesn't matter for display value
-      let(:description) do
-        {
-          title: [
-            {
-              value: 'A title',
-              note: [
-                {
-                  type: 'nonsorting character count',
-                  value: '2'
-                }
-              ]
-            }
-          ]
-        }
-      end
-
-      it 'uses full value from title' do
-        expect(doc['sw_display_title_tesim']).to eq 'A title'
-      end
-    end
-
-    describe 'parallelValue with primary on value' do
-      # Select primary
-      let(:description) do
-        {
-          title: [
-            {
-              parallelValue: [
-                {
-                  value: 'Title 1'
-                },
-                {
-                  value: 'Title 2',
-                  status: 'primary'
-                }
-              ]
-            }
-          ]
-        }
-      end
-
-      it 'uses value with status primary' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title 2'
-      end
-    end
-
-    describe 'parallelValue with primary on parallelValue' do
-      # Select first value in primary parallelValue
-      let(:description) do
-        {
-          title: [
-            {
-              parallelValue: [
-                {
-                  value: 'Title 1'
-                },
-                {
-                  value: 'Title 2'
-                }
-              ],
-              status: 'primary'
-            }
-          ]
-        }
-      end
-
-      it 'uses first value from parallelValue with status primary' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title 1'
-      end
-    end
-
-    describe 'parallelValue with primary on value and parallelValue' do
-      # Select primary value in primary parallelValue
-      let(:description) do
-        {
-          title: [
-            {
-              parallelValue: [
-                {
-                  value: 'Title 1'
-                },
-                {
-                  value: 'Title 2',
-                  status: 'primary'
-                }
-              ],
-              status: 'primary'
-            }
-          ]
-        }
-      end
-
-      it 'uses value with status primary in parallelValue' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title 2'
-      end
-    end
-
-    describe 'primary on both parallelValue value and other value' do
-      # Select other value with primary; parallelValue primary value is primary within
-      # parallelValue but the parallelValue is not itself the primary title
-      let(:description) do
-        {
-          title: [
-            {
-              parallelValue: [
-                {
-                  value: 'Title 1',
-                  status: 'primary'
-                },
-                {
-                  value: 'Title 2'
-                }
-              ]
-            },
-            {
-              value: 'Title 3',
-              status: 'primary'
-            }
-          ]
-        }
-      end
-
-      it 'uses value from outermost title with status primary' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title 3'
-      end
-    end
-
-    describe 'parallelValue with additional value, parallelValue first, no primary' do
-      # Select first value, in this case inside parallelValue
-      let(:description) do
-        {
-          title: [
-            {
-              parallelValue: [
-                {
-                  value: 'Title 1'
-                },
-                {
-                  value: 'Title 2'
-                }
-              ]
-            },
-            {
-              value: 'Title 3'
-            }
-          ]
-        }
-      end
-
-      it 'uses first value' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title 1'
-      end
-    end
-
-    describe 'parallelValue with additional value, value first, no primary' do
-      # Select first value
-      let(:description) do
-        {
-          title: [
-            {
-              value: 'Title 3'
-            },
-            {
-              parallelValue: [
-                {
-                  value: 'Title 1'
-                },
-                {
-                  value: 'Title 2'
-                }
-              ]
-            }
-          ]
-        }
-      end
-
-      it 'uses first value' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title 3'
-      end
-    end
-
-    # **** Constructing title from structuredValue ****
-
-    # nonsorting characters value is followed by a space, unless the nonsorting
-    #   character count note has a numeric value equal to the length of the
-    #   nonsorting characters value, in which case no space is inserted
-    # subtitle is preceded by space colon space, unless it is at the beginning
-    #   of the title string
-    # partName and partNumber are always separated from each other by comma space
-    # first partName or partNumber in the string is preceded by period space
-    # partName or partNumber before nonsorting characters or main title is followed
-    #   by period space
-    describe 'structuredValue with all parts in common order' do
-      let(:description) do
-        {
-          title: [
-            {
-              structuredValue: [
-                {
-                  value: 'A',
-                  type: 'nonsorting characters'
-                },
-                {
-                  value: 'title',
-                  type: 'main title'
-                },
-                {
-                  value: 'a subtitle',
-                  type: 'subtitle'
-                },
-                {
-                  value: 'Vol. 1',
-                  type: 'part number'
-                },
-                {
-                  value: 'Supplement',
-                  type: 'part name'
-                }
-              ]
-            }
-          ]
-        }
-      end
-
-      it 'constructs title from structuredValue' do
+      it 'sw_display_title_tesim is rebuilt structuredValue with punctuation' do
         expect(doc['sw_display_title_tesim']).to eq 'A title : a subtitle. Vol. 1, Supplement'
       end
     end
 
-    describe 'structuredValue with parts in uncommon order' do
-      # improvement on stanford_mods in that it respects field order as given
-      # based on ckey 9803970
-      let(:description) do
-        {
-          title: [
-            {
-              structuredValue: [
-                {
-                  value: 'The',
-                  type: 'nonsorting characters'
-                },
-                {
-                  value: 'title',
-                  type: 'main title'
-                },
-                {
-                  value: 'Vol. 1',
-                  type: 'part number'
-                },
-                {
-                  value: 'Supplement',
-                  type: 'part name'
-                },
-                {
-                  value: 'a subtitle',
-                  type: 'subtitle'
-                }
-              ]
-            }
-          ]
-        }
+    context 'with structuredValue with parts in uncommon order' do
+      # uses given field order; based on ckey 9803970
+      let(:titles) do
+        [
+          {
+            structuredValue: [
+              {
+                value: 'The',
+                type: 'nonsorting characters'
+              },
+              {
+                value: 'title',
+                type: 'main title'
+              },
+              {
+                value: 'Vol. 1',
+                type: 'part number'
+              },
+              {
+                value: 'Supplement',
+                type: 'part name'
+              },
+              {
+                value: 'a subtitle',
+                type: 'subtitle'
+              }
+            ]
+          }
+        ]
       end
 
-      it 'constructs title from structuredValue, respecting order of occurrence' do
+      it 'main_title_tenim is main title and nonsorting chars' do
+        expect(doc['main_title_tenim']).to eq ['The title']
+      end
+
+      it 'full_title_tenim is rebuilt structured value withOUT additional punctuation' do
+        expect(doc['full_title_tenim']).to eq ['The title Vol. 1 Supplement a subtitle']
+      end
+
+      it 'additional_titles_tenim is nil' do
+        expect(doc['additional_titles_tenim']).to be_nil
+      end
+
+      it 'display_title_ss is rebuilt structured value with punctuation' do
+        expect(doc['display_title_ss']).to eq 'The title. Vol. 1, Supplement : a subtitle'
+      end
+
+      it 'sw_display_title_tesim is rebuilt structured value with punctuation' do
         expect(doc['sw_display_title_tesim']).to eq 'The title. Vol. 1, Supplement : a subtitle'
       end
     end
 
-    describe 'structuredValue with multiple partName and partNumber' do
-      # improvement on stanford_mods in that it respects field order as given
-      let(:description) do
-        {
-          title: [
-            {
-              structuredValue: [
-                {
-                  value: 'Title',
-                  type: 'main title'
-                },
-                {
-                  value: 'Special series',
-                  type: 'part name'
-                },
-                {
-                  value: 'Vol. 1',
-                  type: 'part number'
-                },
-                {
-                  value: 'Supplement',
-                  type: 'part name'
-                }
-              ]
-            }
-          ]
-        }
+    context 'with structuredValue with nonsorting character count' do
+      let(:titles) do
+        [
+          {
+            structuredValue: [
+              {
+                value: "L'",
+                type: 'nonsorting characters'
+              },
+              {
+                value: 'autre title',
+                type: 'main title'
+              }
+            ],
+            note: [
+              {
+                value: '2',
+                type: 'nonsorting character count'
+              }
+            ]
+          }
+        ]
       end
 
-      it 'constructs title from structuredValue, respecting order of occurrence' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title. Special series, Vol. 1, Supplement'
-      end
-    end
-
-    describe 'structuredValue with part before title' do
-      # improvement on stanford_mods in that it respects field order as given
-      let(:description) do
-        {
-          title: [
-            {
-              structuredValue: [
-                {
-                  value: 'Series 1',
-                  type: 'part number'
-                },
-                {
-                  value: 'Title',
-                  type: 'main title'
-                }
-              ]
-            }
-          ]
-        }
+      # it does not force a space separator
+      it 'main_title_tenim includes nonsorting chars without extra space' do
+        expect(doc['main_title_tenim']).to eq ['L\'autre title']
       end
 
-      it 'constructs title from structuredValue, respecting order of occurrence' do
-        expect(doc['sw_display_title_tesim']).to eq 'Series 1. Title'
-      end
-    end
-
-    describe 'structuredValue with nonsorting character count' do
-      # improvement on stanford_mods in that it does not force a space separator
-      let(:description) do
-        {
-          title: [
-            {
-              structuredValue: [
-                {
-                  value: "L'",
-                  type: 'nonsorting characters'
-                },
-                {
-                  value: 'autre title',
-                  type: 'main title'
-                }
-              ],
-              note: [
-                {
-                  value: '2',
-                  type: 'nonsorting character count'
-                }
-              ]
-            }
-          ]
-        }
+      it 'full_title_tenim includes nonsorting chars without extra space' do
+        expect(doc['full_title_tenim']).to eq ['L\'autre title']
       end
 
-      it 'constructs title from structuredValue, respecting order of occurrence' do
+      it 'additional_titles_tenim is nil' do
+        expect(doc['additional_titles_tenim']).to be_nil
+      end
+
+      # it does not force a space separator
+      it 'display_title_ss includes nonsorting chars without extra space' do
+        expect(doc['display_title_ss']).to eq 'L\'autre title'
+      end
+
+      it 'sw_display_title_tesim includes nonsorting chars without extra space' do
         expect(doc['sw_display_title_tesim']).to eq 'L\'autre title'
       end
     end
 
-    describe 'structuredValue for uniform title' do
+    context 'with structuredValue with nonsorting characters not first' do
+      let(:titles) do
+        [
+          {
+            structuredValue: [
+              {
+                value: 'Series 1',
+                type: 'part number'
+              },
+              {
+                value: 'A',
+                type: 'nonsorting characters'
+              },
+              {
+                value: 'Title',
+                type: 'main title'
+              }
+            ]
+          }
+        ]
+      end
+
+      it 'main_title_tenim is main title with nonsorting characters' do
+        expect(doc['main_title_tenim']).to eq ['A Title']
+      end
+
+      it 'full_title_tenim is reconstructed value in occurrence order withOUT punctuation' do
+        expect(doc['full_title_tenim']).to eq ['Series 1 A Title']
+      end
+
+      it 'additional_titles_tenim is nil' do
+        expect(doc['additional_titles_tenim']).to be_nil
+      end
+
+      it 'display_title_ss is reconstructed value in occurrence order with punctuation added' do
+        expect(doc['display_title_ss']).to eq 'Series 1. A Title'
+      end
+
+      it 'sw_display_title_tesim is reconstructed value in occurrence order with punctuation added' do
+        expect(doc['sw_display_title_tesim']).to eq 'Series 1. A Title'
+      end
+    end
+
+    context 'with structuredValue for uniform title' do
+      let(:titles) do
+        [
+          {
+            value: 'Title',
+            type: 'uniform',
+            note: [
+              {
+                value: 'Author, An',
+                type: 'associated name'
+              }
+            ]
+          }
+        ]
+      end
+      let(:contributors) do
+        [
+          { name: [{ value: 'Author, An' }] }
+        ]
+      end
+      let(:description) do
+        {
+          title: titles,
+          contributor: contributors,
+          purl: "https://purl.stanford.edu/#{bare_druid}"
+        }
+      end
+
       # Omit author name when uniform title is preferred title for display
-      let(:description) do
-        {
-          title: [
-            {
-              value: 'Title',
-              type: 'uniform',
-              note: [
-                {
-                  value: 'Author, An',
-                  type: 'associated name'
-                }
-              ]
-            }
-          ],
-          contributor: [
-            {
-              name: [
-                {
-                  value: 'Author, An'
-                }
-              ]
-            }
-          ]
-        }
+
+      it 'main_title_tenim is value of the only title without associated name note' do
+        expect(doc['main_title_tenim']).to eq ['Title']
       end
 
-      it 'constructs title from structuredValue without author name' do
+      it 'full_title_tenim is value of the only title without associated name note' do
+        expect(doc['full_title_tenim']).to eq ['Title']
+      end
+
+      it 'additional_titles_tenim is nil' do
+        expect(doc['additional_titles_tenim']).to be_nil
+      end
+
+      it 'display_title_ss is value of the only title without associated name note' do
+        expect(doc['display_title_ss']).to eq 'Title'
+      end
+
+      it 'sw_display_title_tesim is value of the only title without associated name note' do
         expect(doc['sw_display_title_tesim']).to eq 'Title'
       end
     end
 
-    # Handling punctuation
+    context 'with structuredValue containing punctuation/space in individual values' do
+      let(:titles) do
+        [
+          {
+            structuredValue: [
+              {
+                value: 'Title.',
+                type: 'main title'
+              },
+              {
+                value: ':subtitle /',
+                type: 'subtitle'
+              }
+            ]
+          }
+        ]
+      end
 
-    describe 'punctuation/space in simple value' do
       # strip one or more instances of .,;:/\ plus whitespace at beginning or end of string
-      let(:description) do
-        {
-          title: [
-            {
-              value: 'Title /'
-            }
-          ]
-        }
+
+      it 'main_title_tenim is main title only' do
+        expect(doc['main_title_tenim']).to eq ['Title']
       end
 
-      it 'uses value with trailing punctuation of .,;:/\ stripped' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title'
-      end
-    end
-
-    describe 'punctuation/space in structuredValue' do
-      # strip one or more instances of .,;:/\ plus whitespace at beginning or end of string
-      let(:description) do
-        {
-          title: [
-            {
-              structuredValue: [
-                {
-                  value: 'Title.',
-                  type: 'main title'
-                },
-                {
-                  value: ':subtitle',
-                  type: 'subtitle'
-                }
-              ]
-            }
-          ]
-        }
+      it 'full_title_tenim is reconstructed value withOUT punctuation' do
+        expect(doc['full_title_tenim']).to eq ['Title subtitle']
       end
 
-      it 'uses value with trailing whitespace or punctuation [.,;:/\] stripped' do
+      it 'additional_titles_tenim is value(s) is nil' do
+        expect(doc['additional_titles_tenim']).to be_nil
+      end
+
+      it 'display_title_ss is reconstructed value with adjusted punctuation' do
+        expect(doc['display_title_ss']).to eq 'Title : subtitle'
+      end
+
+      it 'sw_display_title_tesim is reconstructed value with adjusted punctuation' do
         expect(doc['sw_display_title_tesim']).to eq 'Title : subtitle'
       end
     end
 
-    # Added by devs
-
-    describe 'only has subtitle' do
-      let(:description) do
-        {
-          title: [
-            {
-              structuredValue: [
-                {
-                  value: 'subtitle',
-                  type: 'subtitle'
-                }
-              ]
-            }
-          ]
-        }
+    context 'with parallelValue with primary on (whole) parallelValue' do
+      let(:titles) do
+        [
+          {
+            parallelValue: [
+              {
+                value: 'Title 1'
+              },
+              {
+                value: 'Title 2'
+              }
+            ],
+            status: 'primary'
+          }
+        ]
       end
 
-      it 'uses correct punctuation' do
-        expect(doc['sw_display_title_tesim']).to eq 'subtitle'
-      end
-    end
-
-    describe 'starts with subtitle, has part name and part number' do
-      let(:description) do
-        {
-          title: [
-            {
-              structuredValue: [
-                {
-                  value: 'subtitle',
-                  type: 'subtitle'
-                },
-                {
-                  value: 'part name',
-                  type: 'part name'
-                },
-                {
-                  value: 'part number',
-                  type: 'part number'
-                }
-              ]
-            }
-          ]
-        }
+      it 'main_title_tenim is both parallel values' do
+        expect(doc['main_title_tenim']).to eq ['Title 1', 'Title 2']
       end
 
-      # partName and partNumber are always separated from each other by comma space
-      # first partName or partNumber in the string is preceded by period space
-      it 'uses correct punctuation' do
-        expect(doc['sw_display_title_tesim']).to eq 'subtitle. part name, part number'
-      end
-    end
-
-    describe 'starts with subtitle, has part number and part name' do
-      let(:description) do
-        {
-          title: [
-            {
-              structuredValue: [
-                {
-                  value: 'subtitle',
-                  type: 'subtitle'
-                },
-                {
-                  value: 'part number',
-                  type: 'part number'
-                },
-                {
-                  value: 'part name',
-                  type: 'part name'
-                }
-              ]
-            }
-          ]
-        }
+      it 'full_title_tenim is both parallel values' do
+        expect(doc['full_title_tenim']).to eq ['Title 1', 'Title 2']
       end
 
-      # partName and partNumber are always separated from each other by comma space
-      # first partName or partNumber in the string is preceded by period space
-      it 'uses correct punctuation' do
-        expect(doc['sw_display_title_tesim']).to eq 'subtitle. part number, part name'
-      end
-    end
-
-    describe 'nonsorting characters not first' do
-      let(:description) do
-        {
-          title: [
-            {
-              structuredValue: [
-                {
-                  value: 'Series 1',
-                  type: 'part number'
-                },
-                {
-                  value: 'A',
-                  type: 'nonsorting characters'
-                },
-                {
-                  value: 'Title',
-                  type: 'main title'
-                }
-              ]
-            }
-          ]
-        }
+      it 'additional_titles_tenim is nil' do
+        expect(doc['additional_titles_tenim']).to be_nil
       end
 
-      it 'uses correct punctuation and respects order of occurrence' do
-        expect(doc['sw_display_title_tesim']).to eq 'Series 1. A Title'
+      it 'display_title_ss is first parallel value' do
+        expect(doc['display_title_ss']).to eq 'Title 1'
+      end
+
+      it 'sw_display_title_tesim is first parallel value' do
+        expect(doc['sw_display_title_tesim']).to eq 'Title 1'
       end
     end
   end

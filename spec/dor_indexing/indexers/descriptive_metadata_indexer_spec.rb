@@ -395,12 +395,16 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
         'sw_author_tesim' => 'George, Henry, 1839-1897',
         'author_text_nostem_im' => 'George, Henry, 1839-1897',
         'contributor_text_nostem_im' => ['George, Henry, 1839-1897', 'George, Henry, 1862-1916', 'George, Bush', 'Wiles, Simon'],
+        'main_title_tenim' => ['The complete works of Henry George'],
+        'full_title_tenim' => ['The complete works of Henry George'],
+        # 'additional_titles_tenim' => '', # not populated by the example; see indexer_spec instead
+        'display_title_ss' => 'The complete works of Henry George',
         'sw_display_title_tesim' => 'The complete works of Henry George',
         # 'originInfo_date_created_tesim' => '', # not populated by the example; see indexer_spec instead
         'originInfo_publisher_tesim' => 'Doubleday, Page',
-        'originInfo_place_placeTerm_tesim' => 'Garden City, N. Y',
         'topic_ssim' => %w[Economics cats],
         'topic_tesim' => %w[cats Economics],
+        'originInfo_place_placeTerm_tesim' => 'Garden City, N. Y',
         'contributor_orcids_ssim' => ['https://orcid.org/0000-1111-2222-3333', 'https://sandbox.orcid.org/1111-2222-3333-4444', 'https://orcid.org/0000-0001-5321-289X']
       )
     end
@@ -466,6 +470,11 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
           'descriptive_tiv' => all_search_text,
           'descriptive_teiv' => all_search_text,
           'descriptive_text_nostem_i' => all_search_text,
+          'main_title_tenim' => ['Toldot ha-Yehudim be-artsot ha-Islam', 'תולדות היהודים בארצות האיסלאם'],
+          'full_title_tenim' => ['Toldot ha-Yehudim be-artsot ha-Islam ha-ʻet ha-ḥadashah-ʻad emtsaʻ ha-meʼah ha-19',
+                                 'תולדות היהודים בארצות האיסלאם העת החדשה עד אמצע המאה ה־19'],
+          'additional_titles_tenim' => ['History of the Jews in the Islamic countries'],
+          'display_title_ss' => 'Toldot ha-Yehudim be-artsot ha-Islam : ha-ʻet ha-ḥadashah-ʻad emtsaʻ ha-meʼah ha-19',
           'sw_display_title_tesim' => 'Toldot ha-Yehudim be-artsot ha-Islam : ha-ʻet ha-ḥadashah-ʻad emtsaʻ ha-meʼah ha-19'
         )
         # rubocop:enable Style/StringHashKeys
