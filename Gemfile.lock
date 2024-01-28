@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dor_indexing (1.2.0)
+    dor_indexing (1.2.1)
       cocina-models (~> 0.94.2)
       dor-workflow-client (~> 7.0)
       honeybadger
