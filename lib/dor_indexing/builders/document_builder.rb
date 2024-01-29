@@ -6,7 +6,7 @@ class DorIndexing
     class DocumentBuilder
       ADMIN_POLICY_INDEXER = DorIndexing::Indexers::CompositeIndexer.new(
         DorIndexing::Indexers::AdministrativeTagIndexer,
-        DorIndexing::Indexers::DataIndexer,
+        DorIndexing::Indexers::BasicIndexer,
         DorIndexing::Indexers::RoleMetadataIndexer,
         DorIndexing::Indexers::DefaultObjectRightsIndexer,
         DorIndexing::Indexers::IdentityMetadataIndexer,
@@ -17,7 +17,7 @@ class DorIndexing
 
       COLLECTION_INDEXER = DorIndexing::Indexers::CompositeIndexer.new(
         DorIndexing::Indexers::AdministrativeTagIndexer,
-        DorIndexing::Indexers::DataIndexer,
+        DorIndexing::Indexers::BasicIndexer,
         DorIndexing::Indexers::RightsMetadataIndexer,
         DorIndexing::Indexers::IdentityMetadataIndexer,
         DorIndexing::Indexers::DescriptiveMetadataIndexer,
@@ -28,7 +28,7 @@ class DorIndexing
 
       ITEM_INDEXER = DorIndexing::Indexers::CompositeIndexer.new(
         DorIndexing::Indexers::AdministrativeTagIndexer,
-        DorIndexing::Indexers::DataIndexer,
+        DorIndexing::Indexers::BasicIndexer,
         DorIndexing::Indexers::RightsMetadataIndexer,
         DorIndexing::Indexers::IdentityMetadataIndexer,
         DorIndexing::Indexers::DescriptiveMetadataIndexer,

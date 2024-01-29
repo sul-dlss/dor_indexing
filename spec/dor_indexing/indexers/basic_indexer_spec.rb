@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe DorIndexing::Indexers::DataIndexer do
+RSpec.describe DorIndexing::Indexers::BasicIndexer do
   let(:cocina) do
     dro = build(
       :dro,

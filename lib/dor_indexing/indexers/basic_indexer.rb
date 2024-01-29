@@ -2,8 +2,8 @@
 
 class DorIndexing
   module Indexers
-    # Indexing provided by ActiveFedora
-    class DataIndexer
+    # Basic indexing for all objects
+    class BasicIndexer
       attr_reader :cocina, :workflow_client
 
       def initialize(cocina:, workflow_client:, **)
