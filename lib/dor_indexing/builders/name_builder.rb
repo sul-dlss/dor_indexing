@@ -2,7 +2,8 @@
 
 class DorIndexing
   module Builders
-    # Builds the author fields for a solr document
+    # class methods return the name values to go in Solr document fields
+    #   used for both contributors and for topics
     class NameBuilder
       # @param [Symbol] strategy ":first" is the strategy for how to choose a name if primary and display name is not found
       # @return [Array<String>] names
