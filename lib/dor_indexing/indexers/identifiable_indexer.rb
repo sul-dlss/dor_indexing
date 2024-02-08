@@ -2,7 +2,7 @@
 
 class DorIndexing
   module Indexers
-    # Indexes the identifiable concerns
+    # Indexes the druid, metadata sources, and the apo titles
     class IdentifiableIndexer
       attr_reader :cocina, :cocina_repository
 
@@ -13,22 +13,28 @@ class DorIndexing
         @cocina_repository = cocina_repository
       end
 
-      ## Module-level variables, shared between ALL mixin includers (and ALL *their* includers/extenders)!
-      ## used for caching found values
+      ## Module-level variable, shared between ALL mixin includers (and ALL *their* includers/extenders)!
+      ## used for caching apo titles
       @@apo_hash = {} # rubocop:disable Style/ClassVars
 
       # @return [Hash] the partial solr document for identifiable concerns
-      def to_solr
+      def to_solr # rubocop:disable Metrics/AbcSize
         {}.tap do |solr_doc|
           add_apo_titles(solr_doc, cocina.administrative.hasAdminPolicy)
 
           solr_doc['metadata_source_ssim'] = identity_metadata_sources unless cocina.is_a? Cocina::Models::AdminPolicyWithMetadata
-          # This used to be added to the index by https://github.com/sul-dlss/dor-services/commit/11b80d249d19326ef591411ffeb634900e75c2c3
-          # and was called dc_identifier_druid_tesim
-          # It is used to search based on druid.
-          solr_doc['objectId_tesim'] = [cocina.externalIdentifier, cocina.externalIdentifier.delete_prefix('druid:')]
+          solr_doc['druid_prefixed_ssi'] = cocina.externalIdentifier
+          solr_doc['druid_bare_ssi'] = cocina.externalIdentifier.delete_prefix('druid:')
+          solr_doc['objectId_tesim'] = [cocina.externalIdentifier, cocina.externalIdentifier.delete_prefix('druid:')] # DEPRECATED
         end
       end
+
+      # Clears out the cache of apos. Used primarily in testing.
+      def self.reset_cache!
+        @@apo_hash = {} # rubocop:disable Style/ClassVars
+      end
+
+      private
 
       # @return [Array<String>] calculated values for Solr index
       def identity_metadata_sources
@@ -36,13 +42,6 @@ class DorIndexing
 
         distinct_current_catalog_types.map(&:capitalize)
       end
-
-      # Clears out the cache of items. Used primarily in testing.
-      def self.reset_cache!
-        @@apo_hash = {} # rubocop:disable Style/ClassVars
-      end
-
-      private
 
       def distinct_current_catalog_types
         # Filter out e.g. "previous symphony", "previous folio"

@@ -33,7 +33,7 @@ RSpec.describe DorIndexing::Indexers::IdentifiableIndexer do
 
   describe '#identity_metadata_sources' do
     it 'indexes metadata sources' do
-      expect(indexer.identity_metadata_sources).to eq %w[Folio]
+      expect(indexer.send(:identity_metadata_sources)).to eq %w[Folio]
     end
   end
 

@@ -42,6 +42,8 @@ RSpec.describe DorIndexing::Indexers::CompositeIndexer do
         'nonhydrus_apo_title_ssim' => ['test admin policy'],
         'apo_title_ssim' => ['test admin policy'],
         'metadata_source_ssim' => ['DOR'],
+        'druid_bare_ssi' => 'mx123ms3333',
+        'druid_prefixed_ssi' => 'druid:mx123ms3333',
         'objectId_tesim' => ['druid:mx123ms3333', 'mx123ms3333'],
         'topic_ssim' => ['word'],
         'topic_tesim' => ['word']
