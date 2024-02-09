@@ -34,8 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'cocina-models', '~> 0.95.0'
   spec.add_dependency 'dor-workflow-client', '~> 7.0'
   spec.add_dependency 'honeybadger'
-  spec.add_dependency 'marc-vocab', '~> 0.3.0'
-  spec.add_dependency 'solrizer'
+  spec.add_dependency 'marc-vocab', '~> 0.3.0' # for marcgac and marccountry
   spec.add_dependency 'stanford-mods'
   spec.add_dependency 'zeitwerk'
 end

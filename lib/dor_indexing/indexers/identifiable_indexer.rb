@@ -56,15 +56,18 @@ class DorIndexing
 
       # @param [Hash] solr_doc
       # @param [String] admin_policy_id
-      def add_apo_titles(solr_doc, admin_policy_id)
+      def add_apo_titles(solr_doc, admin_policy_id) # rubocop:disable Metrics/MethodLength
         row = populate_cache(admin_policy_id)
         title = row['related_obj_title']
         if row['is_from_hydrus']
-          ::Solrizer.insert_field(solr_doc, 'hydrus_apo_title', title, :symbol)
+          solr_doc['hydrus_apo_title_ssim'] ||= []
+          solr_doc['hydrus_apo_title_ssim'] << title
         else
-          ::Solrizer.insert_field(solr_doc, 'nonhydrus_apo_title', title, :symbol)
+          solr_doc['nonhydrus_apo_title_ssim'] ||= []
+          solr_doc['nonhydrus_apo_title_ssim'] << title
         end
-        ::Solrizer.insert_field(solr_doc, 'apo_title', title, :symbol)
+        solr_doc['apo_title_ssim'] ||= []
+        solr_doc['apo_title_ssim'] << title
       end
 
       # populate cache if necessary

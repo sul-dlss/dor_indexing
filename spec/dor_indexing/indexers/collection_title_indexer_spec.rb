@@ -15,8 +15,8 @@ RSpec.describe DorIndexing::Indexers::CollectionTitleIndexer do
       let(:collections) { [] }
 
       it "doesn't raise an error" do
-        expect(doc[Solrizer.solr_name('collection_title', :symbol)]).to be_nil
-        expect(doc[Solrizer.solr_name('collection_title', :stored_searchable)]).to be_nil
+        expect(doc['collection_title_ssim']).to be_nil
+        expect(doc['collection_title_tesim']).to be_nil
       end
     end
 
@@ -25,8 +25,8 @@ RSpec.describe DorIndexing::Indexers::CollectionTitleIndexer do
       let(:collection) { build(:collection, id: collection_druid, title: 'Collection test object') }
 
       it 'generates collection title fields' do
-        expect(doc[Solrizer.solr_name('collection_title', :symbol)].first).to eq 'Collection test object'
-        expect(doc[Solrizer.solr_name('collection_title', :stored_searchable)].first).to eq 'Collection test object'
+        expect(doc['collection_title_ssim'].first).to eq 'Collection test object'
+        expect(doc['collection_title_tesim'].first).to eq 'Collection test object'
       end
     end
   end

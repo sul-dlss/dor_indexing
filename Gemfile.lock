@@ -6,7 +6,6 @@ PATH
       dor-workflow-client (~> 7.0)
       honeybadger
       marc-vocab (~> 0.3.0)
-      solrizer
       stanford-mods
       zeitwerk
 
@@ -179,10 +178,6 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
-    solrizer (4.1.0)
-      activesupport
-      nokogiri
-      xml-simple
     stanford-mods (3.3.9)
       activesupport
       mods (~> 3.0, >= 3.0.4)
@@ -195,8 +190,6 @@ GEM
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
     uri (0.13.0)
-    xml-simple (1.1.9)
-      rexml
     zeitwerk (2.6.12)
 
 PLATFORMS
