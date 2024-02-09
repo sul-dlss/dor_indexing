@@ -130,6 +130,7 @@ RSpec.describe DorIndexing::Indexers::WorkflowIndexer do
     end
 
     context 'when there are error messages' do
+      let(:wf_error) { solr_doc['wf_error_ssim'] }
       let(:xml) do
         <<-XML
         <?xml version="1.0" encoding="UTF-8"?>
@@ -142,8 +143,6 @@ RSpec.describe DorIndexing::Indexers::WorkflowIndexer do
         XML
       end
 
-      let(:wf_error) { solr_doc[Solrizer.solr_name('wf_error', :symbol)] }
-
       it 'indexes the error messages' do
         expect(wf_error).to eq ['accessionWF:technical-metadata:druid:gv054hp4128 - Item error; caused by 413 Request Entity Too Large:']
       end
@@ -152,6 +151,7 @@ RSpec.describe DorIndexing::Indexers::WorkflowIndexer do
     context 'when the error messages are crazy long' do
       let(:error_length) { 40_000 }
       let(:error) { (0...error_length).map { rand(65..90).chr }.join }
+      let(:wf_error) { solr_doc['wf_error_ssim'] }
       let(:xml) do
         <<-XML
         <?xml version="1.0" encoding="UTF-8"?>
@@ -163,8 +163,6 @@ RSpec.describe DorIndexing::Indexers::WorkflowIndexer do
         </workflow>
         XML
       end
-
-      let(:wf_error) { solr_doc[Solrizer.solr_name('wf_error', :symbol)] }
 
       it "truncates the error messages to below Solr's limit" do
         # 31 is the leader

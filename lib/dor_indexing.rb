@@ -3,7 +3,6 @@
 require 'zeitwerk'
 require 'stanford-mods'
 require 'cocina/models'
-require 'solrizer'
 require 'marc/vocab'
 require 'honeybadger'
 

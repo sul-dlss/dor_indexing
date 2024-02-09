@@ -11,14 +11,16 @@ class DorIndexing
         @parent_collections = parent_collections
       end
 
-      # @return [Hash] the partial solr document for identifiable concerns
+      # @return [Hash] the partial solr document for collection title concerns
       def to_solr
         {}.tap do |solr_doc|
-          parent_collections.each do |related_obj|
-            coll_title = Cocina::Models::Builders::TitleBuilder.build(related_obj.description.title)
+          parent_collections.each do |collection_obj|
+            coll_title = Cocina::Models::Builders::TitleBuilder.build(collection_obj.description.title)
 
-            # create/append collection_title_tesim and collection_title_ssim
-            ::Solrizer.insert_field(solr_doc, 'collection_title', coll_title, :stored_searchable, :symbol)
+            solr_doc['collection_title_ssim'] ||= []
+            solr_doc['collection_title_ssim'] << coll_title
+            solr_doc['collection_title_tesim'] ||= []
+            solr_doc['collection_title_tesim'] << coll_title
           end
         end
       end

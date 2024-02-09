@@ -49,8 +49,8 @@ RSpec.describe DorIndexing::Indexers::IdentifiableIndexer do
       end
 
       it 'generates apo title fields' do
-        expect(doc[Solrizer.solr_name('apo_title', :symbol)].first).to eq apo_id
-        expect(doc[Solrizer.solr_name('nonhydrus_apo_title', :symbol)].first).to eq apo_id
+        expect(doc['apo_title_ssim'].first).to eq apo_id
+        expect(doc['nonhydrus_apo_title_ssim'].first).to eq apo_id
       end
     end
 
@@ -58,8 +58,8 @@ RSpec.describe DorIndexing::Indexers::IdentifiableIndexer do
       let(:related) { build(:collection, id: mock_rel_druid, admin_policy_id: apo_id, title: 'collection title') }
 
       it 'generates apo title fields' do
-        expect(doc[Solrizer.solr_name('apo_title', :symbol)].first).to eq 'collection title'
-        expect(doc[Solrizer.solr_name('nonhydrus_apo_title', :symbol)].first).to eq 'collection title'
+        expect(doc['apo_title_ssim'].first).to eq 'collection title'
+        expect(doc['nonhydrus_apo_title_ssim'].first).to eq 'collection title'
       end
 
       it 'indexes metadata sources' do
