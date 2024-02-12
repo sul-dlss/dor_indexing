@@ -392,7 +392,8 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
         'sw_subject_temporal_ssim' => ['1800-1900'],
         'sw_subject_geographic_ssim' => ['Europe'],
         'sw_pub_date_facet_ssi' => '1911',
-        'sw_author_tesim' => 'George, Henry, 1839-1897',
+        'sw_author_tesim' => 'George, Henry, 1839-1897', # DEPRECATED FIELD
+        'author_display_ss' => 'George, Henry, 1839-1897',
         'author_text_nostem_im' => 'George, Henry, 1839-1897',
         'contributor_text_nostem_im' => ['George, Henry, 1839-1897', 'George, Henry, 1862-1916', 'George, Bush', 'Wiles, Simon'],
         'main_title_tenim' => ['The complete works of Henry George'],
