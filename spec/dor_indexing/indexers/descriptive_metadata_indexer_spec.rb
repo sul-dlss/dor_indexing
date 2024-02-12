@@ -382,7 +382,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
                         'Property in land. blah blah print 10 v. fronts (v. 1-9) ports. 21 cm. Economics 1800-1900 ' \
                         'Economics Europe cats'
       expect(doc).to eq(
-        'metadata_format_ssim' => 'mods',
         'descriptive_tiv' => all_search_text,
         'descriptive_teiv' => all_search_text,
         'descriptive_text_nostem_i' => all_search_text,
@@ -466,7 +465,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
                           'Jews in the Islamic countries'
         # rubocop:disable Style/StringHashKeys
         expect(doc).to eq(
-          'metadata_format_ssim' => 'mods',
           'descriptive_tiv' => all_search_text,
           'descriptive_teiv' => all_search_text,
           'descriptive_text_nostem_i' => all_search_text,

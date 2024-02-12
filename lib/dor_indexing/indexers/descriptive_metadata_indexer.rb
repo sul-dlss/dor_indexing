@@ -43,8 +43,6 @@ class DorIndexing
           'originInfo_place_placeTerm_tesim' => event_place, # do we want this?
           'sw_pub_date_facet_ssi' => stanford_mods_record.pub_year_int.to_s, # SW Date facet
 
-          'metadata_format_ssim' => 'mods', # no longer used? https://github.com/search?q=org%3Asul-dlss+metadata_format_ssim&type=code
-
           # SW facets plus a friend facet
           'sw_format_ssim' => sw_format, # SW Resource Type facet
           'mods_typeOfResource_ssim' => resource_type, # MODS Resource Type facet
