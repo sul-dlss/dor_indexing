@@ -12,7 +12,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
     )
   end
 
-  describe 'primary contributor mappings from Cocina to Solr contributor_text_nostem_im and sw_author_tesim' do
+  describe 'primary contributor mappings from Cocina to Solr contributor_text_nostem_im and author_display_ss' do
     ### Select contributor
     context 'when single contributor' do
       let(:description) do
@@ -35,7 +35,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       end
 
       it 'selects name of contributor' do
-        expect(doc).to include('sw_author_tesim' => 'Sayers, Dorothy L.',
+        expect(doc).to include('author_display_ss' => 'Sayers, Dorothy L.',
                                'contributor_text_nostem_im' => ['Sayers, Dorothy L.'])
       end
     end
@@ -69,7 +69,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       end
 
       it 'selects name of contributor with primary status' do
-        expect(doc).to include('sw_author_tesim' => 'Sayers, Dorothy L.',
+        expect(doc).to include('author_display_ss' => 'Sayers, Dorothy L.',
                                'contributor_text_nostem_im' => ['Sayers, Dorothy L.', 'Dunnett, Dorothy'])
       end
     end
@@ -102,7 +102,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       end
 
       it 'selects name of first contributor' do
-        expect(doc).to include('sw_author_tesim' => 'Sayers, Dorothy L.',
+        expect(doc).to include('author_display_ss' => 'Sayers, Dorothy L.',
                                'contributor_text_nostem_im' => ['Sayers, Dorothy L.', 'Dunnett, Dorothy'])
       end
     end
@@ -134,7 +134,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       end
 
       it 'selects display name of contributor' do
-        expect(doc).to include('sw_author_tesim' => 'Sayers, Dorothy L.',
+        expect(doc).to include('author_display_ss' => 'Sayers, Dorothy L.',
                                'contributor_text_nostem_im' => ['Sayers, Dorothy L. (Dorothy Leigh), 1893-1957', 'Sayers, Dorothy L.'])
       end
     end
@@ -164,7 +164,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       end
 
       it 'selects primary name of contributor' do
-        expect(doc).to include('sw_author_tesim' => 'Sayers, Dorothy L.',
+        expect(doc).to include('author_display_ss' => 'Sayers, Dorothy L.',
                                'contributor_text_nostem_im' => ['Sayers, Dorothy L.', 'Sayers, Dorothy L. (Dorothy Leigh), 1893-1957'])
       end
     end
@@ -193,7 +193,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       end
 
       it 'selects first name of contributor' do
-        expect(doc).to include('sw_author_tesim' => 'Sayers, Dorothy L.',
+        expect(doc).to include('author_display_ss' => 'Sayers, Dorothy L.',
                                'contributor_text_nostem_im' => ['Sayers, Dorothy L.', 'Sayers, Dorothy L. (Dorothy Leigh), 1893-1957'])
       end
     end
@@ -227,7 +227,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       end
 
       it 'selects primary name from parallelValue' do
-        expect(doc).to include('sw_author_tesim' => 'Bulgakov, Mikhail Afanasʹevich',
+        expect(doc).to include('author_display_ss' => 'Bulgakov, Mikhail Afanasʹevich',
                                'contributor_text_nostem_im' => ['Булгаков, Михаил Афанасьевич', 'Bulgakov, Mikhail Afanasʹevich'])
       end
     end
@@ -260,7 +260,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       end
 
       it 'selects first name from parallelValue' do
-        expect(doc).to include('sw_author_tesim' => 'Булгаков, Михаил Афанасьевич',
+        expect(doc).to include('author_display_ss' => 'Булгаков, Михаил Афанасьевич',
                                'contributor_text_nostem_im' => ['Булгаков, Михаил Афанасьевич', 'Bulgakov, Mikhail Afanasʹevich'])
       end
     end
@@ -295,7 +295,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       end
 
       it 'selects value with type name' do
-        expect(doc).to include('sw_author_tesim' => 'Strachey, Dorothy',
+        expect(doc).to include('author_display_ss' => 'Strachey, Dorothy',
                                'contributor_text_nostem_im' => ['Strachey, Dorothy'])
       end
     end
@@ -360,7 +360,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       it 'constructs name of contributor' do
         # No comma between name and term of address because also used for e.g. Elizabeth I
         expected_value = 'Sayers Fleming, Dorothy Leigh B.A. (Oxon.), M.A. (Oxon.), 1893-1957'
-        expect(doc).to include('sw_author_tesim' => expected_value,
+        expect(doc).to include('author_display_ss' => expected_value,
                                'contributor_text_nostem_im' => [expected_value])
       end
     end
@@ -408,7 +408,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       it 'constructs name of contributor' do
         # No comma between name and term of address because also used for e.g. Elizabeth I
         expected_value = 'Sayers, Dorothy L. B.A. (Oxon.), M.A. (Oxon.), 1893-1957'
-        expect(doc).to include('sw_author_tesim' => expected_value,
+        expect(doc).to include('author_display_ss' => expected_value,
                                'contributor_text_nostem_im' => [expected_value])
       end
     end
@@ -445,7 +445,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       it 'constructs name of contributor' do
         # Concatenate in order given, period space delimiter
         expected_value = 'United States. Office of Foreign Investment in the United States'
-        expect(doc).to include('sw_author_tesim' => expected_value,
+        expect(doc).to include('author_display_ss' => expected_value,
                                'contributor_text_nostem_im' => [expected_value])
       end
     end
