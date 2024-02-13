@@ -31,7 +31,6 @@ RSpec.describe DorIndexing::Indexers::CompositeIndexer do
 
     it 'calls each of the provided indexers and combines the results' do
       expect(doc).to eq(
-        'metadata_format_ssim' => 'mods',
         'descriptive_tiv' => 'Test item word',
         'descriptive_teiv' => 'Test item word',
         'descriptive_text_nostem_i' => 'Test item word',
