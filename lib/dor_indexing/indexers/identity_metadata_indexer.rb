@@ -11,15 +11,13 @@ class DorIndexing
       end
 
       # @return [Hash] the partial solr document for identityMetadata
-      # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/MethodLength
       def to_solr
         return { 'objectType_ssim' => [object_type] } if object_type == 'adminPolicy' || cocina_object.identification.nil?
 
         {
           'objectType_ssim' => [object_type],
-          'dor_id_tesim' => [source_id_value, barcode, folio_instance_hrid, previous_ils_ids].flatten.compact,
-          'identifier_ssim' => prefixed_identifiers,
+          'identifier_ssim' => prefixed_identifiers, # sourceid, barcode, folio_instance_hrid
           'identifier_tesim' => prefixed_identifiers,
           'barcode_id_ssim' => [barcode].compact,
           'source_id_ssi' => source_id,
@@ -28,7 +26,6 @@ class DorIndexing
           'doi_ssim' => [doi].compact
         }
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
 
       private

@@ -49,7 +49,6 @@ RSpec.describe DorIndexing::Indexers::IdentityMetadataIndexer do
         expect(doc).to include(
           'barcode_id_ssim' => ['36105049267078'],
           'folio_instance_hrid_ssim' => ['a129483625'],
-          'dor_id_tesim' => %w[STANFORD_342837261527 36105049267078 a129483625 a777],
           'identifier_ssim' => ['google:STANFORD_342837261527', 'barcode:36105049267078',
                                 'folio:a129483625'],
           'identifier_tesim' => ['google:STANFORD_342837261527', 'barcode:36105049267078',
@@ -70,7 +69,6 @@ RSpec.describe DorIndexing::Indexers::IdentityMetadataIndexer do
       it 'has the fields used by argo' do
         expect(doc).to include(
           'barcode_id_ssim' => [],
-          'dor_id_tesim' => ['1234'],
           'identifier_ssim' => ['sul:1234'],
           'identifier_tesim' => ['sul:1234'],
           'objectType_ssim' => ['agreement'],
@@ -107,7 +105,6 @@ RSpec.describe DorIndexing::Indexers::IdentityMetadataIndexer do
         expect(doc).to include(
           'barcode_id_ssim' => [],
           'folio_instance_hrid_ssim' => ['a129483625'],
-          'dor_id_tesim' => %w[STANFORD_342837261527 a129483625],
           'identifier_ssim' => ['google:STANFORD_342837261527', 'folio:a129483625'],
           'identifier_tesim' => ['google:STANFORD_342837261527', 'folio:a129483625'],
           'objectType_ssim' => ['collection'],
