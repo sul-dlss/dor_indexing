@@ -16,6 +16,7 @@ class DorIndexing
         {}.tap do |solr_doc|
           parent_collections.each do |collection_obj|
             coll_title = Cocina::Models::Builders::TitleBuilder.build(collection_obj.description.title)
+            next if coll_title.blank?
 
             solr_doc['collection_title_ssim'] ||= []
             solr_doc['collection_title_ssim'] << coll_title
