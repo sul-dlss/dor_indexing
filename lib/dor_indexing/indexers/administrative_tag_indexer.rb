@@ -3,8 +3,6 @@
 class DorIndexing
   module Indexers
     # Index administrative tags for an object.
-    # NOTE: Most of this code was extracted from the dor-services gem:
-    #       https://github.com/sul-dlss/dor-services/blob/v9.0.0/lib/dor/datastreams/identity_metadata_ds.rb#L196-L218
     class AdministrativeTagIndexer
       TAG_PART_DELIMITER = ' : '
       SPECIAL_TAG_TYPES_TO_INDEX = ['Project', 'Registered By'].freeze

@@ -17,11 +17,11 @@ class DorIndexing
 
         {
           'objectType_ssim' => [object_type],
-          'identifier_ssim' => prefixed_identifiers, # sourceid, barcode, folio_instance_hrid
-          'identifier_tesim' => prefixed_identifiers,
+          'identifier_ssim' => prefixed_identifiers, # sourceid, barcode, folio_instance_hrid for display
+          'identifier_tesim' => prefixed_identifiers, # ditto ^^, for search, tokenized (can search prefix and value as separate tokens)
           'barcode_id_ssim' => [barcode].compact,
-          'source_id_ssi' => source_id,
-          'source_id_text_nostem_i' => source_id,
+          'source_id_ssi' => source_id, # for search and display (reports, track_sheet)
+          'source_id_text_nostem_i' => source_id, # for search, tokenized per request from accessioneers
           'folio_instance_hrid_ssim' => [folio_instance_hrid].compact,
           'doi_ssim' => [doi].compact
         }
@@ -34,10 +34,6 @@ class DorIndexing
         @source_id ||= cocina_object.identification.sourceId
       end
 
-      def source_id_value
-        @source_id_value ||= source_id ? source_id.split(':', 2)[1] : nil
-      end
-
       def barcode
         @barcode ||= object_type == 'collection' ? nil : cocina_object.identification.barcode
       end
@@ -48,15 +44,6 @@ class DorIndexing
 
       def folio_instance_hrid
         @folio_instance_hrid ||= Array(cocina_object.identification.catalogLinks).find { |link| link.catalog == 'folio' }&.catalogRecordId
-      end
-
-      def previous_folio_instance_hrids
-        @previous_folio_instance_hrids ||=
-          Array(cocina_object.identification.catalogLinks).filter_map { |link| link.catalogRecordId if link.catalog == 'previous folio' }
-      end
-
-      def previous_ils_ids
-        @previous_ils_ids ||= previous_folio_instance_hrids
       end
 
       def object_type
