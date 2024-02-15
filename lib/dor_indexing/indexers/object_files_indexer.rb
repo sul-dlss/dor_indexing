@@ -2,15 +2,15 @@
 
 class DorIndexing
   module Indexers
-    # Indexes the content metadata
-    class ContentMetadataIndexer
+    # Indexes the information about files in the object
+    class ObjectFilesIndexer
       attr_reader :cocina
 
       def initialize(cocina:, **)
         @cocina = cocina
       end
 
-      # @return [Hash] the partial solr document for contentMetadata
+      # @return [Hash] the partial solr document for files in the object
       def to_solr
         {
           'content_type_ssim' => type(cocina.type),

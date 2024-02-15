@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe DorIndexing::Indexers::ContentMetadataIndexer do
+RSpec.describe DorIndexing::Indexers::ObjectFilesIndexer do
   let(:bare_druid) { 'cs178jh7817' }
   let(:druid) { "druid:#{bare_druid}" }
   let(:doc) { indexer.to_solr }
