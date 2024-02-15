@@ -2,7 +2,7 @@
 
 class DorIndexing
   module Indexers
-    # Indexes the role metadata
+    # Indexes the administrative role metadata
     class RoleMetadataIndexer
       attr_reader :cocina
 

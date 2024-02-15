@@ -2,7 +2,7 @@
 
 class DorIndexing
   module Indexers
-    # Index administrative tags for an object.
+    # Index administrative tags for an object
     class AdministrativeTagIndexer
       TAG_PART_DELIMITER = ' : '
       SPECIAL_TAG_TYPES_TO_INDEX = ['Project', 'Registered By'].freeze

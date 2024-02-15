@@ -4,8 +4,8 @@ require 'stanford-mods'
 
 class DorIndexing
   module Indexers
-    # rubocop:disable Metrics/ClassLength
     # Indexes the descriptive metadata
+    # rubocop:disable Metrics/ClassLength
     class DescriptiveMetadataIndexer
       attr_reader :cocina, :stanford_mods_record
 
