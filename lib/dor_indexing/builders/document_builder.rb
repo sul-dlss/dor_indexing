@@ -33,7 +33,7 @@ class DorIndexing
         DorIndexing::Indexers::IdentityMetadataIndexer,
         DorIndexing::Indexers::DescriptiveMetadataIndexer,
         DorIndexing::Indexers::EmbargoMetadataIndexer,
-        DorIndexing::Indexers::ContentMetadataIndexer,
+        DorIndexing::Indexers::ObjectFilesIndexer,
         DorIndexing::Indexers::IdentifiableIndexer,
         DorIndexing::Indexers::CollectionTitleIndexer,
         DorIndexing::Indexers::ReleasableIndexer,
