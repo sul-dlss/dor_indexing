@@ -2,7 +2,7 @@
 
 class DorIndexing
   module Indexers
-    # Basic indexing for all objects
+    # Basic indexing for any object
     class BasicIndexer
       attr_reader :cocina, :workflow_client
 
@@ -11,6 +11,7 @@ class DorIndexing
         @workflow_client = workflow_client
       end
 
+      # @return [Hash] the partial solr document for basic data
       # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/MethodLength
       def to_solr

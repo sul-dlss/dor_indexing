@@ -2,7 +2,7 @@
 
 class DorIndexing
   module Indexers
-    # Indexes the collection title
+    # Indexes collection titles for an object
     class CollectionTitleIndexer
       attr_reader :cocina, :parent_collections
 

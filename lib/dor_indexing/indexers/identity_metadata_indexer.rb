@@ -2,7 +2,7 @@
 
 class DorIndexing
   module Indexers
-    # Indexes the identity metadata
+    # Indexes the identity metadata from cocina.identification
     class IdentityMetadataIndexer
       attr_reader :cocina_object
 
