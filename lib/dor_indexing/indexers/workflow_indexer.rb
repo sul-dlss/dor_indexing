@@ -2,7 +2,7 @@
 
 class DorIndexing
   module Indexers
-    # Indexes the objects position in workflows
+    # Indexes the object's state for each process in a single workflow
     class WorkflowIndexer
       # @param [Workflow::Response::Workflow] workflow the workflow document to index
       def initialize(workflow:, workflow_client:)
@@ -10,14 +10,14 @@ class DorIndexing
         @workflow_client = workflow_client
       end
 
-      # @return [Hash] the partial solr document for the workflow document
+      # @return [Hash] the partial solr document for all the workflow processes
       def to_solr
         WorkflowSolrDocument.new do |solr_doc|
           solr_doc.name = workflow_name
 
           errors = 0 # The error count is used by the Report class in Argo
           processes.each do |process|
-            ProcessIndexer.new(solr_doc:, workflow_name:, process:).to_solr
+            WorkflowProcessIndexer.new(solr_doc:, workflow_name:, process:).to_solr
             errors += 1 if process.status == 'error'
           end
           solr_doc.status = [workflow_name, workflow_status, errors].join('|')

@@ -2,8 +2,8 @@
 
 class DorIndexing
   module Indexers
-    # Indexes the process for a workflow
-    class ProcessIndexer
+    # Creates solr doc fields (and values) for a process for a workflow (which is for an object)
+    class WorkflowProcessIndexer
       ERROR_OMISSION = '... (continued)'
       private_constant :ERROR_OMISSION
 
@@ -13,14 +13,14 @@ class DorIndexing
 
       # @param [WorkflowSolrDocument] solr_doc
       # @param [String] workflow_name
-      # @param [Dor::Workflow::Response::Process] process
+      # @param [Dor::Workflow::Response::Process] process containing data for a process in a workflow for an object
       def initialize(solr_doc:, workflow_name:, process:)
         @solr_doc = solr_doc
         @workflow_name = workflow_name
         @process = process
       end
 
-      # @return [Hash] the partial solr document for the workflow document
+      # @return [Hash] the partial solr document for a single workflow process
       # rubocop:disable Metrics/AbcSize
       def to_solr
         return unless status
