@@ -61,7 +61,7 @@ class DorIndexing
 
           event_dates = Array(event.date) + Array(event.parallelEvent&.map(&:date))
           event_dates.flatten.compact.find do |date|
-            date_type(date).nil?
+            date_type(date).blank?
           end
         end
       end

@@ -34,8 +34,9 @@ class DorIndexing
           # exploded tags are for hierarchical facets in Argo
           solr_doc['exploded_nonproject_tag_ssim'] += explode_tag_hierarchy(tag) unless prefix == 'project'
 
-          next if rest.nil?
-          # Below indexes specific tag types that are used in Argo:
+          next if rest.blank?
+
+          # Index specific tag types that are used in Argo:
           #  project tags for search results and registered by tags for reports ...
           next unless SPECIAL_TAG_TYPES_TO_INDEX.include?(tag_prefix)
 
