@@ -13,7 +13,7 @@ class DorIndexing
       # @return [Hash] the partial solr document for identityMetadata
       # rubocop:disable Metrics/MethodLength
       def to_solr
-        return { 'objectType_ssim' => [object_type] } if object_type == 'adminPolicy' || cocina_object.identification.nil?
+        return { 'objectType_ssim' => [object_type] } if object_type == 'adminPolicy' || cocina_object.identification.blank?
 
         {
           'objectType_ssim' => [object_type],
