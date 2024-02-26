@@ -1,12 +1,17 @@
 # frozen_string_literal: true
 
 require 'zeitwerk'
-require 'stanford-mods'
-require 'cocina/models'
-require 'marc/vocab'
-require 'honeybadger'
 
 Zeitwerk::Loader.for_gem.setup
+
+# Zeitwerk doesn't auto-load these dependencies
+require 'active_support'
+require 'active_support/core_ext/object/blank'
+require 'active_support/core_ext/enumerable'
+require 'active_support/core_ext/string'
+require 'cocina/models'
+require 'honeybadger'
+require 'marc/vocab'
 
 # Builds solr documents for indexing.
 class DorIndexing
