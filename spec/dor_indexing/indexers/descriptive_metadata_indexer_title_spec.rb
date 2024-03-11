@@ -20,7 +20,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
     # 'full_title_tenim' => full_title, # for searching; 1 more field type is copyField in solr schema.xml
     # 'additional_titles_tenim' => additional_titles, # for searching; 1 more field type is copyField in solr schema.xml
     # 'display_title_ss' => display_title, # for display in Argo
-    # 'sw_display_title_tesim' => DEPRECATED; will be replaced by display_title_ss
 
     context 'with multiple typed and untyped simple title values, one status primary' do
       let(:titles) do
@@ -50,10 +49,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
 
       it 'display_title_ss is value with status primary' do
         expect(doc['display_title_ss']).to eq 'Primary Title'
-      end
-
-      it 'sw_display_title_tesim is value with status primary' do
-        expect(doc['sw_display_title_tesim']).to eq 'Primary Title'
       end
     end
 
@@ -91,10 +86,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       it 'display_title_ss is first value' do
         expect(doc['display_title_ss']).to eq 'First'
       end
-
-      it 'sw_display_title_tesim is first value' do
-        expect(doc['sw_display_title_tesim']).to eq 'First'
-      end
     end
 
     context 'with space/punctuation/space ending simple value' do
@@ -120,10 +111,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
 
       it 'display_title_ss is value without trailing punctuation or spaces' do
         expect(doc['display_title_ss']).to eq 'Title'
-      end
-
-      it 'sw_display_title_tesim is value without trailing punctuation or spaces' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title'
       end
     end
 
@@ -171,10 +158,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
 
       it 'display_title_ss is rebuilt structuredValue with punctuation' do
         expect(doc['display_title_ss']).to eq 'A title : a subtitle. Vol. 1, Supplement'
-      end
-
-      it 'sw_display_title_tesim is rebuilt structuredValue with punctuation' do
-        expect(doc['sw_display_title_tesim']).to eq 'A title : a subtitle. Vol. 1, Supplement'
       end
     end
 
@@ -224,10 +207,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       it 'display_title_ss is rebuilt structured value with punctuation' do
         expect(doc['display_title_ss']).to eq 'The title. Vol. 1, Supplement : a subtitle'
       end
-
-      it 'sw_display_title_tesim is rebuilt structured value with punctuation' do
-        expect(doc['sw_display_title_tesim']).to eq 'The title. Vol. 1, Supplement : a subtitle'
-      end
     end
 
     context 'with structuredValue with nonsorting character count' do
@@ -271,10 +250,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       it 'display_title_ss includes nonsorting chars without extra space' do
         expect(doc['display_title_ss']).to eq 'L\'autre title'
       end
-
-      it 'sw_display_title_tesim includes nonsorting chars without extra space' do
-        expect(doc['sw_display_title_tesim']).to eq 'L\'autre title'
-      end
     end
 
     context 'with structuredValue with nonsorting characters not first' do
@@ -313,10 +288,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
 
       it 'display_title_ss is reconstructed value in occurrence order with punctuation added' do
         expect(doc['display_title_ss']).to eq 'Series 1. A Title'
-      end
-
-      it 'sw_display_title_tesim is reconstructed value in occurrence order with punctuation added' do
-        expect(doc['sw_display_title_tesim']).to eq 'Series 1. A Title'
       end
     end
 
@@ -365,10 +336,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       it 'display_title_ss is value of the only title without associated name note' do
         expect(doc['display_title_ss']).to eq 'Title'
       end
-
-      it 'sw_display_title_tesim is value of the only title without associated name note' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title'
-      end
     end
 
     context 'with structuredValue containing punctuation/space in individual values' do
@@ -406,10 +373,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
       it 'display_title_ss is reconstructed value with adjusted punctuation' do
         expect(doc['display_title_ss']).to eq 'Title : subtitle'
       end
-
-      it 'sw_display_title_tesim is reconstructed value with adjusted punctuation' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title : subtitle'
-      end
     end
 
     context 'with parallelValue with primary on (whole) parallelValue' do
@@ -443,10 +406,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
 
       it 'display_title_ss is first parallel value' do
         expect(doc['display_title_ss']).to eq 'Title 1'
-      end
-
-      it 'sw_display_title_tesim is first parallel value' do
-        expect(doc['sw_display_title_tesim']).to eq 'Title 1'
       end
     end
   end

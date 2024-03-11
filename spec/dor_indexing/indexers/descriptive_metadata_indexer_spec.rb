@@ -398,7 +398,6 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
         'full_title_tenim' => ['The complete works of Henry George'],
         # 'additional_titles_tenim' => '', # not populated by the example; see indexer_spec instead
         'display_title_ss' => 'The complete works of Henry George',
-        'sw_display_title_tesim' => 'The complete works of Henry George',
         # 'originInfo_date_created_tesim' => '', # not populated by the example; see indexer_spec instead
         'originInfo_publisher_tesim' => 'Doubleday, Page',
         'topic_ssim' => %w[Economics cats],
@@ -472,8 +471,7 @@ RSpec.describe DorIndexing::Indexers::DescriptiveMetadataIndexer do
           'full_title_tenim' => ['Toldot ha-Yehudim be-artsot ha-Islam ha-ʻet ha-ḥadashah-ʻad emtsaʻ ha-meʼah ha-19',
                                  'תולדות היהודים בארצות האיסלאם העת החדשה עד אמצע המאה ה־19'],
           'additional_titles_tenim' => ['History of the Jews in the Islamic countries'],
-          'display_title_ss' => 'Toldot ha-Yehudim be-artsot ha-Islam : ha-ʻet ha-ḥadashah-ʻad emtsaʻ ha-meʼah ha-19',
-          'sw_display_title_tesim' => 'Toldot ha-Yehudim be-artsot ha-Islam : ha-ʻet ha-ḥadashah-ʻad emtsaʻ ha-meʼah ha-19'
+          'display_title_ss' => 'Toldot ha-Yehudim be-artsot ha-Islam : ha-ʻet ha-ḥadashah-ʻad emtsaʻ ha-meʼah ha-19'
         )
         # rubocop:enable Style/StringHashKeys
       end

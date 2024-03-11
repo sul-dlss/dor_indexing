@@ -37,7 +37,6 @@ RSpec.describe DorIndexing::Indexers::CompositeIndexer do
         'main_title_tenim' => ['Test item'],
         'full_title_tenim' => ['Test item'],
         'display_title_ss' => 'Test item',
-        'sw_display_title_tesim' => 'Test item',
         'nonhydrus_apo_title_ssim' => ['test admin policy'],
         'apo_title_ssim' => ['test admin policy'],
         'metadata_source_ssim' => ['DOR'],

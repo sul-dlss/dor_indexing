@@ -25,7 +25,6 @@ class DorIndexing
           'full_title_tenim' => full_title, # for searching; 1 more field type is copyField in solr schema.xml
           'additional_titles_tenim' => additional_titles, # for searching; 1 more field type is copyField in solr schema.xml
           'display_title_ss' => display_title, # for display in Argo
-          'sw_display_title_tesim' => display_title, # for display in Argo DEPRECATED in favor of display_title_ss
 
           # contributor
           'author_text_nostem_im' => author_primary, # primary author tokenized but not stemmed
