@@ -35,3 +35,16 @@ require 'dor_indexing'
 
 doc = DorIndexing.build(cocina_with_metadata:, workflow_client:, cocina_repository:)
 ```
+
+## Testing
+
+### Integration Testing with Solr
+
+We build and update the Solr index via dor-indexing-app amd dor-services-app, both of which use this gem for indexing logic.
+
+Argo is the blacklight app that uses the Solr index extensively, and it already has the docker containers to create new test objects in dor-services-app and index them (via dor_indexing_app to Solr).  And Argo is the app built on top of the Solr index, so a good place to check results.
+
+To ensure our indexing behavior produces the desired results, it was easiest to put
+the full stack integration tests in the argo repository -- they can be found in
+https://github.com/sul-dlss/argo/tree/main/spec/features/indexing_xxx_spec.rb
+
