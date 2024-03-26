@@ -4,6 +4,7 @@ PATH
     dor_indexing (1.4.1)
       activesupport
       cocina-models (~> 0.95.1)
+      dor-services-client (~> 14.0)
       dor-workflow-client (~> 7.0)
       honeybadger
       marc-vocab (~> 0.3.0)
@@ -51,6 +52,13 @@ GEM
       activesupport
     diff-lcs (1.5.1)
     docile (1.4.0)
+    dor-services-client (14.4.0)
+      activesupport (>= 4.2, < 8)
+      cocina-models (~> 0.95.1)
+      deprecation
+      faraday (~> 2.0)
+      faraday-retry
+      zeitwerk (~> 2.1)
     dor-workflow-client (7.0.2)
       activesupport (>= 3.2.1, < 8)
       deprecation (>= 0.99.0)
