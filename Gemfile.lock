@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dor_indexing (1.4.1)
+    dor_indexing (1.5.0)
       activesupport
       cocina-models (~> 0.95.1)
       dor-services-client (~> 14.0)
