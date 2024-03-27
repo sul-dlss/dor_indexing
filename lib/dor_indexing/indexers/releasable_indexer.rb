@@ -4,11 +4,12 @@ class DorIndexing
   module Indexers
     # Indexes the object's release tags
     class ReleasableIndexer
-      attr_reader :cocina, :parent_collections
+      attr_reader :cocina, :parent_collections, :dor_services_client
 
-      def initialize(cocina:, parent_collections:, **)
+      def initialize(cocina:, parent_collections:, dor_services_client:, **)
         @cocina = cocina
         @parent_collections = parent_collections
+        @dor_services_client = dor_services_client
       end
 
       # @return [Hash] the partial solr document for releasable concerns
@@ -40,8 +41,11 @@ class DorIndexing
 
       def tags_from_collection
         parent_collections.each_with_object({}) do |collection, result|
-          Array(collection.administrative.releaseTags)
-            .select { |tag| tag.what == 'collection' }
+          collection_object_client = dor_services_client.object(collection.externalIdentifier)
+          collection_object_client
+            .release_tags
+            .list
+            .select { |tag| tag.what == 'self' }
             .group_by(&:to).map do |project, releases_for_project|
               result[project] = releases_for_project.max_by(&:date)
             end
@@ -49,13 +53,14 @@ class DorIndexing
       end
 
       def tags_from_item
-        released_for.group_by(&:to).transform_values do |releases_for_project|
-          releases_for_project.max_by(&:date)
-        end
-      end
-
-      def released_for
-        Array(cocina.administrative.releaseTags)
+        object_client = dor_services_client.object(cocina.externalIdentifier)
+        object_client
+          .release_tags
+          .list
+          .select { |tag| tag.what == 'self' }
+          .group_by(&:to).transform_values do |releases_for_project|
+            releases_for_project.max_by(&:date)
+          end
       end
     end
   end

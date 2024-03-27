@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe DorIndexing::Builders::DocumentBuilder do
-  subject(:indexer) { described_class.for(model: cocina_with_metadata, workflow_client:, cocina_repository:) }
+  subject(:indexer) { described_class.for(model: cocina_with_metadata, workflow_client:, dor_services_client:, cocina_repository:) }
 
   let(:cocina_with_metadata) do
     Cocina::Models.with_metadata(cocina, 'unknown_lock', created: DateTime.parse('Wed, 01 Jan 2020 12:00:01 GMT'),
@@ -10,6 +10,7 @@ RSpec.describe DorIndexing::Builders::DocumentBuilder do
 
   let(:cocina_repository) { instance_double(DorIndexing::CocinaRepository) }
   let(:workflow_client) { instance_double(Dor::Workflow::Client) }
+  let(:dor_services_client) { instance_double(Dor::Services::Client) }
 
   let(:druid) { 'druid:xx999xx9999' }
   let(:releasable) do
@@ -64,7 +65,7 @@ RSpec.describe DorIndexing::Builders::DocumentBuilder do
     context 'with a cached collections' do
       before do
         allow(cocina_repository).to receive(:find).and_return(related)
-        described_class.for(model: cocina_with_metadata, cocina_repository:, workflow_client:)
+        described_class.for(model: cocina_with_metadata, cocina_repository:, workflow_client:, dor_services_client:)
       end
 
       let(:related) { build(:collection) }
@@ -94,6 +95,7 @@ RSpec.describe DorIndexing::Builders::DocumentBuilder do
                 administrative_tags: [],
                 parent_collections: [],
                 workflow_client:,
+                dor_services_client:,
                 cocina_repository:)
         expect(Honeybadger).to have_received(:notify).with('Bad association found on druid:xx999xx9999. druid:bc999df2323 could not be found')
       end
