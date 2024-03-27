@@ -42,20 +42,22 @@ RSpec.describe DorIndexing::Indexers::ReleasableIndexer do
         end
       end
 
-      context 'when Searchworks and Earthworks tags are present' do
+      context 'when Searchworks, Earthworks, and PURL sitemap tags are present' do
         let(:release_tags) do
           [
             Cocina::Models::ReleaseTag.new(to: 'Searchworks', release: true, date: '2021-05-12T21:05:21.000+00:00', what: 'self'),
-            Cocina::Models::ReleaseTag.new(to: 'Earthworks', release: true, date: '2016-11-16T22:52:35.000+00:00', what: 'self')
+            Cocina::Models::ReleaseTag.new(to: 'Earthworks', release: true, date: '2016-11-16T22:52:35.000+00:00', what: 'self'),
+            Cocina::Models::ReleaseTag.new(to: 'PURL sitemap', release: true, date: '2023-03-27T10:00:00.000+00:00', what: 'self')
           ]
         end
 
         it 'indexes release tags' do
           # rubocop:disable Style/StringHashKeys
           expect(doc).to eq(
-            'released_to_ssim' => %w[Searchworks Earthworks],
+            'released_to_ssim' => ['Searchworks', 'Earthworks', 'PURL sitemap'],
             'released_to_earthworks_dttsi' => '2016-11-16T22:52:35Z',
-            'released_to_searchworks_dttsi' => '2021-05-12T21:05:21Z'
+            'released_to_searchworks_dttsi' => '2021-05-12T21:05:21Z',
+            'released_to_purl_sitemap_dttsi' => '2023-03-27T10:00:00Z'
           )
           # rubocop:enable Style/StringHashKeys
         end
