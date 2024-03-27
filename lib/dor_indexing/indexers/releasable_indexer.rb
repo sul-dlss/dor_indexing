@@ -4,11 +4,12 @@ class DorIndexing
   module Indexers
     # Indexes the object's release tags
     class ReleasableIndexer
-      attr_reader :cocina, :parent_collections
+      attr_reader :cocina, :parent_collections, :dor_services_client
 
-      def initialize(cocina:, parent_collections:, **)
+      def initialize(cocina:, parent_collections:, dor_services_client:, **)
         @cocina = cocina
         @parent_collections = parent_collections
+        @dor_services_client = dor_services_client
       end
 
       # @return [Hash] the partial solr document for releasable concerns
@@ -40,7 +41,7 @@ class DorIndexing
 
       def tags_from_collection
         parent_collections.each_with_object({}) do |collection, result|
-          collection_object_client = Dor::Services::Client.object(collection.externalIdentifier)
+          collection_object_client = dor_services_client.object(collection.externalIdentifier)
           collection_object_client
             .release_tags
             .list
@@ -52,7 +53,7 @@ class DorIndexing
       end
 
       def tags_from_item
-        object_client = Dor::Services::Client.object(cocina.externalIdentifier)
+        object_client = dor_services_client.object(cocina.externalIdentifier)
         object_client
           .release_tags
           .list

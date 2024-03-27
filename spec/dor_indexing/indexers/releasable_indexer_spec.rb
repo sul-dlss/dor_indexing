@@ -12,12 +12,13 @@ RSpec.describe DorIndexing::Indexers::ReleasableIndexer do
   let(:release_tags) { [] }
 
   describe 'to_solr' do
-    let(:doc) { described_class.new(cocina:, parent_collections:).to_solr }
+    let(:doc) { described_class.new(cocina:, parent_collections:, dor_services_client:).to_solr }
+    let(:dor_services_client) { instance_double(Dor::Services::Client) }
     let(:object_client) { instance_double(Dor::Services::Client::Object, find: cocina, release_tags: release_tags_client) }
     let(:release_tags_client) { instance_double(Dor::Services::Client::ReleaseTags, list: release_tags) }
 
     before do
-      allow(Dor::Services::Client).to receive(:object).with(cocina.externalIdentifier).and_return(object_client)
+      allow(dor_services_client).to receive(:object).with(cocina.externalIdentifier).and_return(object_client)
     end
 
     context 'with no parent collection' do
@@ -85,7 +86,7 @@ RSpec.describe DorIndexing::Indexers::ReleasableIndexer do
       let(:collection_release_tags) { [] }
 
       before do
-        allow(Dor::Services::Client).to receive(:object).with(collection_druid).and_return(collection_object_client)
+        allow(dor_services_client).to receive(:object).with(collection_druid).and_return(collection_object_client)
       end
 
       context 'when the parent collection has releaseTags' do

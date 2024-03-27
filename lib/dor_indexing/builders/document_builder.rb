@@ -48,17 +48,18 @@ class DorIndexing
 
       @@parent_collections = {} # rubocop:disable Style/ClassVars
 
-      def self.for(model:, workflow_client:, cocina_repository:)
-        new(model:, workflow_client:, cocina_repository:).for
+      def self.for(model:, workflow_client:, dor_services_client:, cocina_repository:)
+        new(model:, workflow_client:, dor_services_client:, cocina_repository:).for
       end
 
       def self.reset_parent_collections
         @@parent_collections = {} # rubocop:disable Style/ClassVars
       end
 
-      def initialize(model:, workflow_client:, cocina_repository:)
+      def initialize(model:, workflow_client:, dor_services_client:, cocina_repository:)
         @model = model
         @workflow_client = workflow_client
+        @dor_services_client = dor_services_client
         @cocina_repository = cocina_repository
       end
 
@@ -69,12 +70,13 @@ class DorIndexing
                                          parent_collections:,
                                          administrative_tags:,
                                          workflow_client:,
+                                         dor_services_client:,
                                          cocina_repository:)
       end
 
       private
 
-      attr_reader :model, :workflow_client, :cocina_repository
+      attr_reader :model, :workflow_client, :dor_services_client, :cocina_repository
 
       def id
         model.externalIdentifier
