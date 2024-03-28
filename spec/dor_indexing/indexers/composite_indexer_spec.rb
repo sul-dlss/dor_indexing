@@ -20,14 +20,15 @@ RSpec.describe DorIndexing::Indexers::CompositeIndexer do
       }
     )
   end
-  let(:cocina_repository) { instance_double(DorIndexing::CocinaRepository, find: apo, administrative_tags: []) }
+  let(:cocina_repository) { ->(_druid) { apo } }
+  let(:administrative_tags_repository) { ->(_druid) { [] } }
 
   describe 'to_solr' do
     let(:status) do
       instance_double(Dor::Workflow::Client::Status, milestones: {}, display: 'bad')
     end
     let(:workflow_client) { instance_double(Dor::Workflow::Client, status:) }
-    let(:doc) { indexer.new(id: druid, cocina: cocina_item, workflow_client:, cocina_repository:).to_solr }
+    let(:doc) { indexer.new(id: druid, cocina: cocina_item, workflow_client:, cocina_repository:, administrative_tags_repository:).to_solr }
 
     it 'calls each of the provided indexers and combines the results' do
       expect(doc).to eq(
