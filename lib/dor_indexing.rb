@@ -17,13 +17,14 @@ require 'marc/vocab'
 # Builds solr documents for indexing.
 class DorIndexing
   # @return [Hash] the solr document
-  def self.build(cocina_with_metadata:, workflow_client:, dor_services_client:, cocina_repository:)
+  def self.build(cocina_with_metadata:, workflow_client:, cocina_repository:, administrative_tags_repository:, release_tags_repository:)
     Honeybadger.context({ identifier: cocina_with_metadata.externalIdentifier })
     DorIndexing::Builders::DocumentBuilder.for(
       model: cocina_with_metadata,
       workflow_client:,
-      dor_services_client:,
-      cocina_repository:
+      cocina_repository:,
+      administrative_tags_repository:,
+      release_tags_repository:
     ).to_solr
   end
 end
