@@ -26,14 +26,22 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
-DorIndexing that a configured Workflow Client, DOR Services Client, and a Cocina Repository be injected.
+DorIndexing requires interaction with the SDR workflow API and also needs the following:
 
-The Cocina Repository provides methods for finding Cocina objects and administrative tags. One possible implementation of a Cocina Repository would be to use DOR Services Client.
+* a callable that takes a single argument (a druid) and returns the Cocina for the corresponding object
+* a callable that takes a single argument (a druid) and returns the list of administrative tags for the corresponding object
+* a callable that takes a single argument (a druid) and returns the list of release tags for the corresponding object
 
 ```ruby
 require 'dor_indexing'
 
-doc = DorIndexing.build(cocina_with_metadata:, workflow_client:, dor_services_client:, cocina_repository:)
+doc = DorIndexing.build(
+  cocina_with_metadata:,
+  workflow_client:,
+  cocina_finder:,
+  administrative_tags_finder:,
+  release_tags_finder:
+)
 ```
 
 ## Testing
@@ -47,4 +55,3 @@ Argo is the blacklight app that uses the Solr index extensively, and it already 
 To ensure our indexing behavior produces the desired results, it was easiest to put
 the full stack integration tests in the argo repository -- they can be found in
 https://github.com/sul-dlss/argo/tree/main/spec/features/indexing_xxx_spec.rb
-

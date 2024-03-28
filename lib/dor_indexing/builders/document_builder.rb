@@ -48,19 +48,20 @@ class DorIndexing
 
       @@parent_collections = {} # rubocop:disable Style/ClassVars
 
-      def self.for(model:, workflow_client:, dor_services_client:, cocina_repository:)
-        new(model:, workflow_client:, dor_services_client:, cocina_repository:).for
+      def self.for(...)
+        new(...).for
       end
 
       def self.reset_parent_collections
         @@parent_collections = {} # rubocop:disable Style/ClassVars
       end
 
-      def initialize(model:, workflow_client:, dor_services_client:, cocina_repository:)
+      def initialize(model:, workflow_client:, cocina_finder:, administrative_tags_finder:, release_tags_finder:)
         @model = model
         @workflow_client = workflow_client
-        @dor_services_client = dor_services_client
-        @cocina_repository = cocina_repository
+        @cocina_finder = cocina_finder
+        @administrative_tags_finder = administrative_tags_finder
+        @release_tags_finder = release_tags_finder
       end
 
       # @param [Cocina::Models::DROWithMetadata,Cocina::Models::CollectionWithMetadata,Cocina::Model::AdminPolicyWithMetadata] model
@@ -70,13 +71,14 @@ class DorIndexing
                                          parent_collections:,
                                          administrative_tags:,
                                          workflow_client:,
-                                         dor_services_client:,
-                                         cocina_repository:)
+                                         cocina_finder:,
+                                         administrative_tags_finder:,
+                                         release_tags_finder:)
       end
 
       private
 
-      attr_reader :model, :workflow_client, :dor_services_client, :cocina_repository
+      attr_reader :model, :workflow_client, :cocina_finder, :administrative_tags_finder, :release_tags_finder
 
       def id
         model.externalIdentifier
@@ -90,8 +92,8 @@ class DorIndexing
         return [] unless model.dro?
 
         Array(model.structural&.isMemberOf).filter_map do |rel_druid|
-          @@parent_collections[rel_druid] ||= cocina_repository.find(rel_druid)
-        rescue DorIndexing::CocinaRepository::RepositoryError
+          @@parent_collections[rel_druid] ||= cocina_finder.call(rel_druid)
+        rescue DorIndexing::RepositoryError
           Honeybadger.notify("Bad association found on #{model.externalIdentifier}. #{rel_druid} could not be found")
           # This may happen if the referenced Collection does not exist (bad data)
           nil
@@ -99,8 +101,8 @@ class DorIndexing
       end
 
       def administrative_tags
-        cocina_repository.administrative_tags(id)
-      rescue DorIndexing::CocinaRepository::RepositoryError
+        administrative_tags_finder.call(id)
+      rescue DorIndexing::RepositoryError
         []
       end
     end

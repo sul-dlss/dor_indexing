@@ -20,11 +20,10 @@ RSpec.describe DorIndexing::Indexers::IdentifiableIndexer do
       sourceId: 'sul:1234'
     }
   end
-
-  let(:cocina_repository) { instance_double(DorIndexing::CocinaRepository, administrative_tags: []) }
-
+  let(:cocina_finder) { ->(_druid) {} }
+  let(:administrative_tags_finder) { ->(_druid) { [] } }
   let(:indexer) do
-    described_class.new(cocina: cocina_item, cocina_repository:)
+    described_class.new(cocina: cocina_item, cocina_finder:, administrative_tags_finder:)
   end
 
   before do
@@ -41,12 +40,10 @@ RSpec.describe DorIndexing::Indexers::IdentifiableIndexer do
     let(:doc) { indexer.to_solr }
     let(:mock_rel_druid) { 'druid:qf999gg9999' }
     let(:related) { build(:admin_policy, id: apo_id) }
-    let(:cocina_repository) { instance_double(DorIndexing::CocinaRepository, find: related, administrative_tags: []) }
+    let(:cocina_finder) { ->(_druid) { related } }
 
     context 'when APO is not found' do
-      before do
-        allow(cocina_repository).to receive(:find).and_raise(DorIndexing::CocinaRepository::RepositoryError)
-      end
+      let(:cocina_finder) { ->(_druid) { raise DorIndexing::RepositoryError } }
 
       it 'generates apo title fields' do
         expect(doc['apo_title_ssim'].first).to eq apo_id
