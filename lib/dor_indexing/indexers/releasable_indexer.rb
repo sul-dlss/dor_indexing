@@ -19,18 +19,27 @@ class DorIndexing
         {
           'released_to_ssim' => tags.map(&:to).uniq,
           'released_to_searchworks_dttsi' => searchworks_release_date,
-          'released_to_earthworks_dttsi' => earthworks_release_date
+          'released_to_earthworks_dttsi' => earthworks_release_date,
+          'released_to_purl_sitemap_dttsi' => purl_sitemap_release_date
         }.compact
       end
 
       private
 
+      def purl_sitemap_release_date
+        date_for_tag 'PURL sitemap'
+      end
+
       def earthworks_release_date
-        tags.find { |tag| tag.to == 'Earthworks' }&.date&.utc&.iso8601
+        date_for_tag 'Earthworks'
       end
 
       def searchworks_release_date
-        tags.find { |tag| tag.to == 'Searchworks' }&.date&.utc&.iso8601
+        date_for_tag 'Searchworks'
+      end
+
+      def date_for_tag(project)
+        tags.find { |tag| tag.to == project }&.date&.utc&.iso8601
       end
 
       # Item tags have precidence over collection tags, so if the collection is release=true
