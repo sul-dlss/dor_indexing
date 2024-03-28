@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/sul-dlss/dor_indexing'
-  spec.metadata['changelog_uri'] = 'https://github.com/sul-dlss/folio_client/releases'
+  spec.metadata['changelog_uri'] = 'https://github.com/sul-dlss/dor_indexing/releases'
   spec.metadata['rubygems_mfa_required'] = 'true'
 
   # Specify which files should be added to the gem when it is released.
@@ -33,7 +33,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activesupport'
   spec.add_dependency 'cocina-models', '~> 0.95.1'
-  spec.add_dependency 'dor-services-client', '~> 14.0'
   spec.add_dependency 'dor-workflow-client', '~> 7.0'
   spec.add_dependency 'honeybadger'
   spec.add_dependency 'marc-vocab', '~> 0.3.0'
