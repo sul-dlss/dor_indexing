@@ -12,14 +12,8 @@ RSpec.describe DorIndexing::Indexers::ReleasableIndexer do
   let(:release_tags) { [] }
 
   describe 'to_solr' do
-    let(:doc) { described_class.new(cocina:, parent_collections:, dor_services_client:).to_solr }
-    let(:dor_services_client) { instance_double(Dor::Services::Client) }
-    let(:object_client) { instance_double(Dor::Services::Client::Object, find: cocina, release_tags: release_tags_client) }
-    let(:release_tags_client) { instance_double(Dor::Services::Client::ReleaseTags, list: release_tags) }
-
-    before do
-      allow(dor_services_client).to receive(:object).with(cocina.externalIdentifier).and_return(object_client)
-    end
+    let(:doc) { described_class.new(cocina:, parent_collections:, release_tags_finder:).to_solr }
+    let(:release_tags_finder) { ->(_druid) { release_tags } }
 
     context 'with no parent collection' do
       let(:parent_collections) { [] }
@@ -80,15 +74,16 @@ RSpec.describe DorIndexing::Indexers::ReleasableIndexer do
       let(:collection_administrative) do
         instance_double(Cocina::Models::Administrative, releaseTags: collection_release_tags)
       end
-      let(:collection_object_client) do
-        instance_double(Dor::Services::Client::Object, find: collection, release_tags: collection_release_tags_client)
-      end
-      let(:collection_release_tags_client) { instance_double(Dor::Services::Client::ReleaseTags, list: collection_release_tags) }
       let(:collection_druid) { 'druid:bc123fg4567' }
       let(:collection_release_tags) { [] }
-
-      before do
-        allow(dor_services_client).to receive(:object).with(collection_druid).and_return(collection_object_client)
+      let(:release_tags_finder) do
+        lambda do |druid|
+          if druid == collection_druid
+            collection_release_tags
+          else
+            release_tags
+          end
+        end
       end
 
       context 'when the parent collection has releaseTags' do

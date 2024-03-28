@@ -4,13 +4,14 @@ class DorIndexing
   module Indexers
     # Indexes the druid, metadata sources, and the apo titles
     class IdentifiableIndexer
-      attr_reader :cocina, :cocina_repository
+      attr_reader :cocina, :cocina_finder, :administrative_tags_finder
 
       CURRENT_CATALOG_TYPE = 'folio'
 
-      def initialize(cocina:, cocina_repository:, **)
+      def initialize(cocina:, cocina_finder:, administrative_tags_finder:, **)
         @cocina = cocina
-        @cocina_repository = cocina_repository
+        @cocina_finder = cocina_finder
+        @administrative_tags_finder = administrative_tags_finder
       end
 
       ## Module-level variable, shared between ALL mixin includers (and ALL *their* includers/extenders)!
@@ -72,13 +73,13 @@ class DorIndexing
       # populate cache if necessary
       def populate_cache(rel_druid)
         @@apo_hash[rel_druid] ||= begin
-          related_obj = cocina_repository.find(rel_druid)
+          related_obj = cocina_finder.call(rel_druid)
           # APOs don't have projects, and since Hydrus is set to be retired, I don't want to
           # add the cocina property. Just check the tags service instead.
           is_from_hydrus = hydrus_tag?(rel_druid)
           title = Cocina::Models::Builders::TitleBuilder.build(related_obj.description.title)
           { 'related_obj_title' => title, 'is_from_hydrus' => is_from_hydrus }
-        rescue CocinaRepository::RepositoryError
+        rescue RepositoryError
           Honeybadger.notify("Bad association found on #{cocina.externalIdentifier}. #{rel_druid} could not be found")
           # This may happen if the given APO or Collection does not exist (bad data)
           { 'related_obj_title' => rel_druid, 'is_from_hydrus' => false }
@@ -86,7 +87,7 @@ class DorIndexing
       end
 
       def hydrus_tag?(id)
-        cocina_repository.administrative_tags(id).include?('Project : Hydrus')
+        administrative_tags_finder.call(id).include?('Project : Hydrus')
       end
     end
   end
