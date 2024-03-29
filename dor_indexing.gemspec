@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'activesupport'
-  spec.add_dependency 'cocina-models', '~> 0.95.1'
+  spec.add_dependency 'cocina-models', '~> 0.96.0'
   spec.add_dependency 'dor-workflow-client', '~> 7.0'
   spec.add_dependency 'honeybadger'
   spec.add_dependency 'marc-vocab', '~> 0.3.0'
