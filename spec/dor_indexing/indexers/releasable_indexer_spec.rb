@@ -64,6 +64,19 @@ RSpec.describe DorIndexing::Indexers::ReleasableIndexer do
           expect(doc).to be_empty
         end
       end
+
+      context 'when a collection with a collection releaseTag' do
+        let(:release_tags) do
+          [
+            Cocina::Models::ReleaseTag.new(to: 'Project', release: true, date: '2016-11-16T22:52:35.000+00:00', what: 'collection'),
+            Cocina::Models::ReleaseTag.new(to: 'test_target', release: true, what: 'self')
+          ]
+        end
+
+        it 'indexes release tags' do
+          expect(doc).to eq('released_to_ssim' => %w[Project test_target]) # rubocop:disable Style/StringHashKeys
+        end
+      end
     end
 
     context 'with a parent collection' do

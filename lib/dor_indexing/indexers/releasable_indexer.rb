@@ -42,8 +42,9 @@ class DorIndexing
         tags.find { |tag| tag.to == project }&.date&.utc&.iso8601
       end
 
-      # Item tags have precidence over collection tags, so if the collection is release=true
+      # Item tags have precedence over collection tags, so if the collection is release=true
       # and the item is release=false, then it is not released
+      # Note that this logic is duplicative of DSA's ReleaseTagService.for_public_metadata
       def tags
         @tags ||= tags_from_collection.merge(tags_from_item).values.select(&:release)
       end
@@ -62,7 +63,6 @@ class DorIndexing
       def tags_from_item
         release_tags_finder
           .call(cocina.externalIdentifier)
-          .select { |tag| tag.what == 'self' }
           .group_by(&:to).transform_values do |releases_for_project|
             releases_for_project.max_by(&:date)
           end
