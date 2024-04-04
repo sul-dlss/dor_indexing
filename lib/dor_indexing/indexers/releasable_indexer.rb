@@ -53,7 +53,7 @@ class DorIndexing
         parent_collections.each_with_object({}) do |collection, result|
           release_tags_finder
             .call(collection.externalIdentifier)
-            .select { |tag| tag.what == 'self' }
+            .select { |tag| tag.what == 'collection' }
             .group_by(&:to).map do |project, releases_for_project|
               result[project] = releases_for_project.max_by(&:date)
             end

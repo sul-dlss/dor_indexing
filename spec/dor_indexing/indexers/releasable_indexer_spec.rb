@@ -99,11 +99,24 @@ RSpec.describe DorIndexing::Indexers::ReleasableIndexer do
         end
       end
 
-      context 'when the parent collection has releaseTags' do
+      context 'when the parent collection has self releaseTags' do
         let(:release_tags) { [] }
         let(:collection_release_tags) do
           [
             Cocina::Models::ReleaseTag.new(to: 'test_target', release: true, date: '2016-12-21T17:31:18.000+00:00', what: 'self')
+          ]
+        end
+
+        it 'indexes release tags' do
+          expect(doc).to be_empty
+        end
+      end
+
+      context 'when the parent collection has collection releaseTags' do
+        let(:release_tags) { [] }
+        let(:collection_release_tags) do
+          [
+            Cocina::Models::ReleaseTag.new(to: 'test_target', release: true, date: '2016-12-21T17:31:18.000+00:00', what: 'collection')
           ]
         end
 
