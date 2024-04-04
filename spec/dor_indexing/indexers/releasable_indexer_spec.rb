@@ -132,7 +132,7 @@ RSpec.describe DorIndexing::Indexers::ReleasableIndexer do
           [Cocina::Models::ReleaseTag.new(to: 'test_target', release: true, date: '2016-12-21T17:31:18.000+00:00', what: 'self')]
         end
         let(:collection_release_tags) do
-          [Cocina::Models::ReleaseTag.new(to: 'test_target', release: true, date: '2016-12-21T17:31:18.000+00:00', what: 'self')]
+          [Cocina::Models::ReleaseTag.new(to: 'test_target', release: true, date: '2016-12-21T17:31:18.000+00:00', what: 'collection')]
         end
 
         it 'indexes release tags' do
@@ -150,7 +150,7 @@ RSpec.describe DorIndexing::Indexers::ReleasableIndexer do
         end
         let(:collection_release_tags) do
           [
-            Cocina::Models::ReleaseTag.new(to: 'test_target', release: true, date: '2016-12-21T17:31:18.000+00:00', what: 'self')
+            Cocina::Models::ReleaseTag.new(to: 'test_target', release: true, date: '2016-12-21T17:31:18.000+00:00', what: 'collection')
           ]
         end
 
